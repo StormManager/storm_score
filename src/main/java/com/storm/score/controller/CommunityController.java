@@ -183,7 +183,6 @@ public class CommunityController {
     @ApiOperation(value = "커뮤니티 삭제", notes = "커뮤니티의 정보를 삭제")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "communityId", value = "커뮤니티 번호", required = true, dataType = "Long"),
-            @ApiImplicitParam(name = "name", value = "커뮤니티 이름", required = true, dataType = "String")
     })
     @ApiResponses(value = {
             @ApiResponse(
