@@ -18,10 +18,7 @@ public class Test {
       @ApiImplicitParam(name="userName", value = "회원의이름", required = true, dataType = "String"),
       @ApiImplicitParam(name="userId", value = "회원의아이디", required = true, dataType = "String")
   })
-  public String getTest(@RequestParam String userName){
-    if(userName.equals(userName))
-     return "HIHI";
-    else
+  public String getTest(){
       return "FAIL";
 
   }
