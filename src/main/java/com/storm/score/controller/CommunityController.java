@@ -1,5 +1,6 @@
 package com.storm.score.controller;
 
+import io.swagger.annotations.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -9,12 +10,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/communities")
+@Api("Community Management System")
 public class CommunityController {
 
     //  ####### 도메인 추가시 삭제 요망#######
     // 임시 데이터 저장소
+    @ApiModelProperty(
+            example = "- id: 1\n  name: 샤마임\n" +
+                    "- id: 2\n  name: 수요기도회\n" +
+                    "- id: 3\n  name: 수련회",
+            dataType = "List"
+    )
     private static final List<Community> communityDatabase = new ArrayList<>();
 
     private static long communityId = 0;
@@ -40,6 +49,26 @@ public class CommunityController {
     // ####################################
 
     @GetMapping()
+    @ApiOperation(value = "커뮤니티 목록 조회", notes = "사용 가능한 커뮤니티 목록을 조회")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved all communities",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- id: 1\n  name: 샤마임\n" +
+                                            "- id: 2\n  name: 수요기도회\n" +
+                                            "- id: 3\n  name: 수련회"
+                            )
+                    )
+
+            ),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<List<Community>> getAllCommunities() {
         List<Community> communityList = communityDatabase;
         if (communityList != null) {
@@ -50,6 +79,26 @@ public class CommunityController {
     }
 
     @GetMapping("/{communityId}")
+    @ApiOperation(value = "커뮤니티 정보 조회", notes = "특정 커뮤니티의 정보를 조회")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "communityId", value = "커뮤니티 번호", required = true, dataType = "Long")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved community",
+                    response = Community.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- id: 1\n  name: 샤마임"
+                            )
+                    )
+            ),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<Community> getCommunityById(@PathVariable Long communityId) {
         for (Community community : communityDatabase) {
             if (community.getId() == communityId) {
@@ -60,6 +109,23 @@ public class CommunityController {
     }
 
     @PostMapping()
+    @ApiOperation(value = "커뮤니티 등록", notes = "새로운 커뮤니티를 등록")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully created community",
+                    response = Community.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- id: 1\n  name: 샤마임"
+                            )
+                    )
+            ),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<Community> createCommunity(@RequestParam String name) {
         communityDatabase.add(new Community(++communityId, name));
         for (Community community : communityDatabase) {
@@ -71,6 +137,27 @@ public class CommunityController {
     }
 
     @PutMapping("/{communityId}")
+    @ApiOperation(value = "커뮤니티 수정", notes = "커뮤니티의 정보를 수정")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "communityId", value = "커뮤니티 번호", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "name", value = "커뮤니티 이름", required = true, dataType = "String")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully updated community",
+                    response = Community.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "Community updated successfully"
+                            )
+                    )
+            ),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<String> updateCommunityById(@PathVariable Long communityId,
                                                       @RequestParam String name) {
         for (Community community : communityDatabase) {
@@ -83,6 +170,27 @@ public class CommunityController {
     }
 
     @DeleteMapping("/{communityId})")
+    @ApiOperation(value = "커뮤니티 삭제", notes = "커뮤니티의 정보를 삭제")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "communityId", value = "커뮤니티 번호", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "name", value = "커뮤니티 이름", required = true, dataType = "String")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully deleted community",
+                    response = String.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "Community deleted successfully"
+                            )
+                    )
+            ),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<String> deleteCommunityById(@PathVariable Long communityId) {
         for (Community community : communityDatabase) {
             if (community.getId() == communityId) {
