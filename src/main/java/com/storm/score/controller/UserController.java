@@ -10,6 +10,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * description    : User Management System
+ * packageName    : com.storm.score.controller
+ * fileName       : UserController
+ * author         : senor14
+ * date           : 2023/11/23
+ * ===========================================================
+ * DATE              AUTHOR             NOTE
+ * -----------------------------------------------------------
+ * 2023/11/23        senor14       최초 생성
+ */
 @RestController()
 @RequestMapping("/api/users")
 @Api("User Management System")
@@ -141,14 +152,14 @@ public class UserController {
     @ApiOperation(value = "회원 수정", notes = "회원의 정보를 수정")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "사용자 번호", required = true, dataType = "Long"),
-            @ApiImplicitParam(name = "name", value = "사용자 이름", required = true, dataType = "Long"),
-            @ApiImplicitParam(name = "email", value = "이메일 주소", required = true, dataType = "Long")
+            @ApiImplicitParam(name = "name", value = "사용자 이름", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "email", value = "이메일 주소", required = true, dataType = "String")
     })
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
                     message = "Successfully updated user",
-                    response = User.class,
+                    response = String.class,
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",

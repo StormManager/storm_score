@@ -10,7 +10,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * description    : Community Management System
+ * packageName    : com.storm.score.controller
+ * fileName       : CommunityController
+ * author         : senor14
+ * date           : 2023/11/23
+ * ===========================================================
+ * DATE              AUTHOR             NOTE
+ * -----------------------------------------------------------
+ * 2023/11/23        senor14       최초 생성
+ */
 @RestController
 @RequestMapping("/api/communities")
 @Api("Community Management System")
