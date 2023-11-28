@@ -120,6 +120,9 @@ public class CommunityController {
 
     @PostMapping()
     @ApiOperation(value = "커뮤니티 등록", notes = "새로운 커뮤니티를 등록")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "name", value = "커뮤니티 이름", required = true, dataType = "String")
+    })
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,

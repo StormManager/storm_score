@@ -122,6 +122,10 @@ public class UserController {
 
     @PostMapping()
     @ApiOperation(value = "회원 등록", notes = "새로운 회원을 등록")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name", value = "사용자 이름", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "email", value = "이메일 주소", required = true, dataType = "String")
+    })
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
