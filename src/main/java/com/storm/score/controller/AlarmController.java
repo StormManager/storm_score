@@ -1,6 +1,6 @@
 package com.storm.score.controller;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/alarms")
+@Api("Alarm Management System")
 public class AlarmController {
 
     //  ####### 도메인 추가시 삭제 요망#######
@@ -62,6 +63,25 @@ public class AlarmController {
     // ####################################
 
     @GetMapping()
+    @ApiOperation(value = "알림 목록 조회", notes = "사용 가능한 알림 목록을 조회")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved all alarms",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- alarmId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD\n" +
+                                            "- alarmId: 2\n  inviteId: 2\n  userId: 1\n  status: UNREAD\n" +
+                                            "- alarmId: 3\n  inviteId: 3\n  userId: 1\n  status: UNREAD"
+                            )
+                    )
+            ),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<List<Alarm>> getAllAlarms() {
         List<Alarm> alarmList = alarmDatabase;
         if (alarmList != null) {
@@ -71,6 +91,26 @@ public class AlarmController {
     }
 
     @GetMapping("/{alarmId}")
+    @ApiOperation(value = "알림 정보 조회", notes = "특정 알림의 정보를 조회")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "alarmId", value = "알림 아이디", required = true, dataType = "Long")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved alarm",
+                    response = Alarm.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- alarmId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD"
+                            )
+                    )
+            ),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<Alarm> getAlarmByAlarmId(@PathVariable Long alarmId) {
         for (Alarm alarm : alarmDatabase) {
             if (alarm.getAlarmId() == alarmId) {
@@ -81,6 +121,27 @@ public class AlarmController {
     }
 
     @PostMapping()
+    @ApiOperation(value = "알림 등록", notes = "새로운 알림을 등록")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "inviteId", value = "초대 아이디", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully created alarm",
+                    response = Alarm.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- alarmId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD"
+                            )
+                    )
+            ),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<Alarm> createAlarm(@RequestParam Long inviteId,
                                              @RequestParam Long userId) {
         alarmDatabase.add(Alarm
@@ -99,6 +160,26 @@ public class AlarmController {
     }
 
     @PutMapping("/{alarmId}")
+    @ApiOperation(value = "알림 읽음 상태 수정", notes = "알림의 읽음 상태 정보를 수정")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "alarmId", value = "알림 아이디", required = true, dataType = "Long"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully updated alarm",
+                    response = String.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "Alarm updated successfully"
+                            )
+                    )
+            ),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<String> updateAlarmByAlarmId(@PathVariable Long alarmId) {
         for (Alarm alarm : alarmDatabase) {
             if (alarm.getAlarmId() == alarmId) {
@@ -110,6 +191,26 @@ public class AlarmController {
     }
 
     @DeleteMapping("/{alarmId}")
+    @ApiOperation(value = "알림 삭제", notes = "알림의 정보를 삭제")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "alarmId", value = "알림 아이디", required = true, dataType = "Long"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully deleted alarm",
+                    response = String.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "Alarm deleted successfully"
+                            )
+                    )
+            ),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
     public ResponseEntity<String> deleteAlarmByAlarmId(@PathVariable Long alarmId) {
         for (Alarm alarm : alarmDatabase) {
             if (alarm.getAlarmId() == alarmId) {
