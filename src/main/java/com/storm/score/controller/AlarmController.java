@@ -30,7 +30,8 @@ public class AlarmController {
     //  ####### 도메인 추가시 삭제 요망#######
     // 임시 데이터 저장소
     @ApiModelProperty(
-            example = "- alarmId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD\n" +
+            example =
+                    "- alarmId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD\n" +
                     "- alarmId: 2\n  inviteId: 2\n  userId: 1\n  status: UNREAD\n" +
                     "- alarmId: 3\n  inviteId: 3\n  userId: 1\n  status: UNREAD",
             dataType = "List"

@@ -30,9 +30,9 @@ public class ScoreController {
     // 임시 데이터 저장소
     @ApiModelProperty(
             example =
-                    "- id: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n" +
-                            "- id: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
-                            "- id: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n",
+                    "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n" +
+                    "- scoreId: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
+                    "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n",
             dataType = "List"
     )
     private static final List<Score> scoreDatabase = new ArrayList<>();
@@ -48,13 +48,13 @@ public class ScoreController {
     @Getter
     @Setter
     private static class Score {
-        private Long id;
+        private Long scoreId;
         private String title;
         private String singer;
         private String instrument;
 
-        public Score(Long id, String title, String singer, String instrument) {
-            this.id = id;
+        public Score(Long scoreId, String title, String singer, String instrument) {
+            this.scoreId = scoreId;
             this.title = title;
             this.singer = singer;
             this.instrument = instrument;
@@ -74,9 +74,9 @@ public class ScoreController {
                             @ExampleProperty(
                                     mediaType = "application/json",
                                     value =
-                                            "- id: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n" +
-                                                    "- id: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
-                                                    "- id: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n"
+                                            "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n" +
+                                            "- scoreId: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
+                                            "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n"
                             )
                     )
             ),
@@ -96,7 +96,7 @@ public class ScoreController {
     @GetMapping("/{scoreId}")
     @ApiOperation(value = "악보 정보 조회", notes = "특정 악보의 정보를 조회")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "scoreId", value = "악보 번호", required = true, dataType = "Long")
+            @ApiImplicitParam(name = "scoreId", value = "악보 아이디", required = true, dataType = "Long")
     })
     @ApiResponses(value = {
             @ApiResponse(
@@ -106,7 +106,7 @@ public class ScoreController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- id: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n"
+                                    value = "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n"
                             )
                     )
             ),
@@ -116,7 +116,7 @@ public class ScoreController {
     })
     public ResponseEntity<Score> getScoreById(@PathVariable Long scoreId) {
         for (Score score : scoreDatabase) {
-            if (score.getId() == scoreId) {
+            if (score.getScoreId() == scoreId) {
                 return new ResponseEntity<>(score, HttpStatus.OK);
             }
         }
@@ -138,7 +138,7 @@ public class ScoreController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- id: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n"
+                                    value = "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n"
                             )
                     )
             ),
@@ -151,7 +151,7 @@ public class ScoreController {
                                              @RequestParam String instrument) {
         scoreDatabase.add(new Score(++scoreId, title, singer, instrument));
         for (Score score : scoreDatabase) {
-            if (score.getId() == scoreId) {
+            if (score.getScoreId() == scoreId) {
                 return new ResponseEntity<>(score, HttpStatus.OK);
             }
         }
@@ -161,7 +161,7 @@ public class ScoreController {
     @PutMapping("/{scoreId}")
     @ApiOperation(value = "악보 수정", notes = "악보의 정보를 수정")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "scoreId", value = "악보 번호", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "scoreId", value = "악보 아이디", required = true, dataType = "Long"),
             @ApiImplicitParam(name = "title", value = "악보 제목", required = true, dataType = "String"),
             @ApiImplicitParam(name = "singer", value = "가수 이름", required = true, dataType = "String"),
             @ApiImplicitParam(name = "instrument", value = "코드(키)", required = true, dataType = "String")
@@ -187,7 +187,7 @@ public class ScoreController {
                                                   @RequestParam String singer,
                                                   @RequestParam String instrument) {
         for (Score score : scoreDatabase) {
-            if (score.getId() == scoreId) {
+            if (score.getScoreId() == scoreId) {
                 score.setTitle(title);
                 score.setSinger(singer);
                 score.setInstrument(instrument);
@@ -200,7 +200,7 @@ public class ScoreController {
     @DeleteMapping("/{scoreId}")
     @ApiOperation(value = "악보 삭제", notes = "악보의 정보를 삭제")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "scoreId", value = "악보 번호", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "scoreId", value = "악보 아이디", required = true, dataType = "Long"),
     })
     @ApiResponses(value = {
             @ApiResponse(
@@ -220,7 +220,7 @@ public class ScoreController {
     })
     public ResponseEntity<String> deleteScoreById(@PathVariable Long scoreId) {
         for (Score score : scoreDatabase) {
-            if (score.getId() == scoreId) {
+            if (score.getScoreId() == scoreId) {
                 scoreDatabase.remove(score);
                 return new ResponseEntity<>("Score deleted successfully", HttpStatus.OK);
             }

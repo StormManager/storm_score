@@ -29,9 +29,9 @@ public class UserController {
     //  ####### 도메인 추가시 삭제 요망#######
     // 임시 데이터 저장소
     @ApiModelProperty(
-            example = "- id: 1\n  name: 경태\n  email: kt123@example.com\n" +
-                    "- id: 2\n  name: 승환\n  email: sh123@example.com\n" +
-                    "- id: 3\n  name: 선열\n  email: sy123@example.com",
+            example = "- userId: 1\n  name: 경태\n  email: kt123@example.com\n" +
+                    "- userId: 2\n  name: 승환\n  email: sh123@example.com\n" +
+                    "- userId: 3\n  name: 선열\n  email: sy123@example.com",
             dataType = "List"
     )
     private static final List<User> userDatabase = new ArrayList<>();
@@ -47,12 +47,12 @@ public class UserController {
     @Getter
     @Setter
     private static class User {
-        private Long id;
+        private Long userId;
         private String name;
         private String email;
 
-        public User(Long id, String name, String email) {
-            this.id = id;
+        public User(Long userId, String name, String email) {
+            this.userId = userId;
             this.name = name;
             this.email = email;
         }
@@ -71,9 +71,9 @@ public class UserController {
                             @ExampleProperty(
                                     mediaType = "application/json",
                                     value =
-                                            "- id: 1\n  name: 경태\n  email: kt123@example.com\n" +
-                                                    "- id: 2\n  name: 승환\n  email: sh123@example.com\n" +
-                                                    "- id: 3\n  name: 선열\n  email: sy123@example.com"
+                                            "- userId: 1\n  name: 경태\n  email: kt123@example.com\n" +
+                                            "- userId: 2\n  name: 승환\n  email: sh123@example.com\n" +
+                                            "- userId: 3\n  name: 선열\n  email: sy123@example.com"
                             )
                     )
             ),
@@ -93,7 +93,7 @@ public class UserController {
     @GetMapping("/{userId}")
     @ApiOperation(value = "회원 정보 조회", notes = "특정 회원의 정보를 조회")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "사용자 번호", required = true, dataType = "Long")
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long")
     })
     @ApiResponses(value = {
             @ApiResponse(
@@ -103,7 +103,7 @@ public class UserController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- id: 1\n  name: 경태\n  email: kt123@example.com"
+                                    value = "- userId: 1\n  name: 경태\n  email: kt123@example.com"
                             )
                     )
             ),
@@ -113,7 +113,7 @@ public class UserController {
     })
     public ResponseEntity<User> getUserById(@PathVariable Long userId) {
         for (User user : userDatabase) {
-            if (user.getId() == userId) {
+            if (user.getUserId() == userId) {
                 return new ResponseEntity<>(user, HttpStatus.OK);
             }
         }
@@ -123,7 +123,7 @@ public class UserController {
     @PostMapping()
     @ApiOperation(value = "회원 등록", notes = "새로운 회원을 등록")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "사용자 이름", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "name", value = "회원 이름", required = true, dataType = "String"),
             @ApiImplicitParam(name = "email", value = "이메일 주소", required = true, dataType = "String")
     })
     @ApiResponses(value = {
@@ -134,7 +134,7 @@ public class UserController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- id: 1\n  name: 경태\n  email: kt123@example.com"
+                                    value = "- userId: 1\n  name: 경태\n  email: kt123@example.com"
                             )
                     )
             ),
@@ -145,7 +145,7 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestParam String name, @RequestParam String email) {
         userDatabase.add(new User(++userId, name, email));
         for (User user : userDatabase) {
-            if (user.getId() == userId) {
+            if (user.getUserId() == userId) {
                 return new ResponseEntity<>(user, HttpStatus.OK);
             }
         }
@@ -155,8 +155,8 @@ public class UserController {
     @PutMapping("/{userId}")
     @ApiOperation(value = "회원 수정", notes = "회원의 정보를 수정")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "사용자 번호", required = true, dataType = "Long"),
-            @ApiImplicitParam(name = "name", value = "사용자 이름", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "name", value = "회원 이름", required = true, dataType = "String"),
             @ApiImplicitParam(name = "email", value = "이메일 주소", required = true, dataType = "String")
     })
     @ApiResponses(value = {
@@ -179,7 +179,7 @@ public class UserController {
                                                  @RequestParam String name,
                                                  @RequestParam String email) {
         for (User user : userDatabase) {
-            if (user.getId() == userId) {
+            if (user.getUserId() == userId) {
                 user.setName(name);
                 user.setEmail(email);
                 return new ResponseEntity<>("User updated successfully", HttpStatus.OK);
@@ -191,7 +191,7 @@ public class UserController {
     @DeleteMapping("/{userId}")
     @ApiOperation(value = "회원 삭제", notes = "회원 정보를 삭제")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "사용자 번호", required = true, dataType = "Long")
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long")
     })
     @ApiResponses(value = {
             @ApiResponse(
@@ -211,7 +211,7 @@ public class UserController {
     })
     public ResponseEntity<String> deleteUserById(@PathVariable Long userId) {
         for (User user : userDatabase) {
-            if (user.getId() == userId) {
+            if (user.getUserId() == userId) {
                 userDatabase.remove(user);
                 return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
             }
