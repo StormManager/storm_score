@@ -23,7 +23,7 @@ import java.util.List;
  * 2023/11/23        senor14       최초 생성
  */
 @RestController()
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @Api("User Management System")
 public class UserController {
 

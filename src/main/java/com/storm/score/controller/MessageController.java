@@ -23,7 +23,7 @@ import java.util.List;
  * 2023-11-28        senor14       최초 생성
  */
 @RestController
-@RequestMapping("/api/messages")
+@RequestMapping("/api/v1/messages")
 @Api("Message Management System")
 public class MessageController {
 

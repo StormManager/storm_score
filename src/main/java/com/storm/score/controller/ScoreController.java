@@ -23,7 +23,7 @@ import java.util.List;
  * 2023-11-28        senor14       최초 생성
  */
 @RestController
-@RequestMapping("/api/scores")
+@RequestMapping("/api/v1/scores")
 @Api("Score Management System")
 public class ScoreController {
 

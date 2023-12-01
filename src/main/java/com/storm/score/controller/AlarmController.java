@@ -23,7 +23,7 @@ import java.util.List;
  * 2023-11-28        senor14       최초 생성
  */
 @RestController
-@RequestMapping("/api/alarms")
+@RequestMapping("/api/v1/alarms")
 @Api("Alarm Management System")
 public class AlarmController {
 
