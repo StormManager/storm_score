@@ -1,6 +1,7 @@
 package com.storm.score.controller;
 
 import io.swagger.annotations.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -47,18 +48,12 @@ public class ScoreController {
 
     @Getter
     @Setter
+    @Builder
     private static class Score {
         private Long scoreId;
         private String title;
         private String singer;
         private String instrument;
-
-        public Score(Long scoreId, String title, String singer, String instrument) {
-            this.scoreId = scoreId;
-            this.title = title;
-            this.singer = singer;
-            this.instrument = instrument;
-        }
     }
 
     // ####################################
@@ -149,7 +144,13 @@ public class ScoreController {
     public ResponseEntity<Score> createScore(@RequestParam String title,
                                              @RequestParam String singer,
                                              @RequestParam String instrument) {
-        scoreDatabase.add(new Score(++scoreId, title, singer, instrument));
+        scoreDatabase.add(Score
+                .builder()
+                .scoreId(++scoreId)
+                .title(title)
+                .singer(singer)
+                .instrument(instrument)
+                .build());
         for (Score score : scoreDatabase) {
             if (score.getScoreId() == scoreId) {
                 return new ResponseEntity<>(score, HttpStatus.OK);

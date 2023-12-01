@@ -1,6 +1,7 @@
 package com.storm.score.controller;
 
 import io.swagger.annotations.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -47,18 +48,12 @@ public class MessageController {
 
     @Getter
     @Setter
+    @Builder
     private static class Message {
         private Long messageId;
         private Long userId;
         private Long roomId;
         private String imageUrl;
-
-        public Message(Long messageId, Long userId, Long roomId, String imageUrl) {
-            this.messageId = messageId;
-            this.userId = userId;
-            this.roomId = roomId;
-            this.imageUrl = imageUrl;
-        }
     }
 
     // ####################################
@@ -149,7 +144,13 @@ public class MessageController {
     public ResponseEntity<Message> createMessage(@RequestParam Long userId,
                                                  @RequestParam Long roomId,
                                                  @RequestParam String imageUrl) {
-        messageDatabase.add(new Message(++messageId, userId, roomId, imageUrl));
+        messageDatabase.add(Message
+                .builder()
+                .messageId(++messageId)
+                .userId(userId)
+                .roomId(roomId)
+                .imageUrl(imageUrl)
+                .build());
         for (Message message : messageDatabase) {
             if (message.getMessageId() == messageId) {
                 return new ResponseEntity<>(message, HttpStatus.OK);

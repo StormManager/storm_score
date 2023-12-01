@@ -1,6 +1,7 @@
 package com.storm.score.controller;
 
 import io.swagger.annotations.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -46,16 +47,11 @@ public class UserController {
 
     @Getter
     @Setter
+    @Builder
     private static class User {
         private Long userId;
         private String name;
         private String email;
-
-        public User(Long userId, String name, String email) {
-            this.userId = userId;
-            this.name = name;
-            this.email = email;
-        }
     }
 
     // ####################################
@@ -143,7 +139,12 @@ public class UserController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     public ResponseEntity<User> createUser(@RequestParam String name, @RequestParam String email) {
-        userDatabase.add(new User(++userId, name, email));
+        userDatabase.add(User
+                .builder()
+                .userId(++userId)
+                .name(name)
+                .email(email)
+                .build());
         for (User user : userDatabase) {
             if (user.getUserId() == userId) {
                 return new ResponseEntity<>(user, HttpStatus.OK);

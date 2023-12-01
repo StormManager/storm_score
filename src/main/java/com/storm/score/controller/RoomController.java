@@ -1,6 +1,7 @@
 package com.storm.score.controller;
 
 import io.swagger.annotations.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -46,14 +47,10 @@ public class RoomController {
 
     @Getter
     @Setter
+    @Builder
     private static class Room {
         private Long roomId;
         private String name;
-
-        public Room(Long roomId, String name) {
-            this.roomId = roomId;
-            this.name = name;
-        }
     }
 
     // ####################################
@@ -139,7 +136,11 @@ public class RoomController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     public ResponseEntity<Room> createRoom(@RequestParam String name) {
-        roomDatabase.add(new Room(++roomId, name));
+        roomDatabase.add(Room
+                .builder()
+                .roomId(++roomId)
+                .name(name)
+                .build());
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
                 return new ResponseEntity<>(room, HttpStatus.OK);
