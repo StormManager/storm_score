@@ -161,7 +161,9 @@ public class AlarmController {
     }
 
     @PutMapping("/{alarmId}")
-    @ApiOperation(value = "알림 읽음 상태 수정", notes = "알림의 읽음 상태 정보를 수정")
+    @ApiOperation(value = "알림 읽음 상태 수정", 
+            notes = "알림의 읽음 상태 정보를 수정\n" +
+                    "[ UNREAD(안읽음) => READ(읽음) ]")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "alarmId", value = "알림 아이디", required = true, dataType = "Long"),
     })
