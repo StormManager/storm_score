@@ -1,6 +1,7 @@
 package com.storm.score.controller;
 
 import io.swagger.annotations.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
@@ -11,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * description    : Community Management System
+ * description    : Room Management System
  * packageName    : com.storm.score.controller
- * fileName       : CommunityController
+ * fileName       : RoomController
  * author         : senor14
  * date           : 2023/11/23
  * ===========================================================
@@ -22,86 +23,81 @@ import java.util.List;
  * 2023/11/23        senor14       최초 생성
  */
 @RestController
-@RequestMapping("/api/communities")
-@Api("Community Management System")
-public class CommunityController {
+@RequestMapping("/api/v1/rooms")
+@Api("Room Management System")
+public class RoomController {
 
     //  ####### 도메인 추가시 삭제 요망#######
     // 임시 데이터 저장소
     @ApiModelProperty(
-            example = "- id: 1\n  name: 샤마임\n" +
-                    "- id: 2\n  name: 수요기도회\n" +
-                    "- id: 3\n  name: 수련회",
+            example = "- roomId: 1\n  name: 샤마임\n" +
+                    "- roomId: 2\n  name: 수요기도회\n" +
+                    "- roomId: 3\n  name: 수련회",
             dataType = "List"
     )
-    private static final List<Community> communityDatabase = new ArrayList<>();
+    private static final List<Room> roomDatabase = new ArrayList<>();
 
-    private static long communityId = 0;
+    private static long roomId = 0;
 
     static {
-        communityDatabase.add(new Community(++communityId, "샤마임"));
-        communityDatabase.add(new Community(++communityId, "수요기도회"));
-        communityDatabase.add(new Community(++communityId, "수련회"));
+        roomDatabase.add(new Room(++roomId, "샤마임"));
+        roomDatabase.add(new Room(++roomId, "수요기도회"));
+        roomDatabase.add(new Room(++roomId, "수련회"));
     }
 
     @Getter
     @Setter
-    private static class Community {
-        private Long id;
+    @Builder
+    private static class Room {
+        private Long roomId;
         private String name;
-
-        public Community(Long id, String name) {
-            this.id = id;
-            this.name = name;
-        }
     }
 
     // ####################################
 
     @GetMapping()
-    @ApiOperation(value = "커뮤니티 목록 조회", notes = "사용 가능한 커뮤니티 목록을 조회")
+    @ApiOperation(value = "방 목록 조회", notes = "사용 가능한 방 목록을 조회")
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
-                    message = "Successfully retrieved all communities",
+                    message = "Successfully retrieved all rooms",
                     response = List.class,
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- id: 1\n  name: 샤마임\n" +
-                                            "- id: 2\n  name: 수요기도회\n" +
-                                            "- id: 3\n  name: 수련회"
+                                    value = "- roomId: 1\n  name: 샤마임\n" +
+                                            "- roomId: 2\n  name: 수요기도회\n" +
+                                            "- roomId: 3\n  name: 수련회"
                             )
                     )
-
             ),
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    public ResponseEntity<List<Community>> getAllCommunities() {
-        List<Community> communityList = communityDatabase;
-        if (communityList != null) {
-            return new ResponseEntity<>(communityList, HttpStatus.OK);
+    public ResponseEntity<List<Room>> getAllRooms() {
+        List<Room> roomList = roomDatabase;
+        if (roomList != null) {
+            return new ResponseEntity<>(roomList, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/{communityId}")
-    @ApiOperation(value = "커뮤니티 정보 조회", notes = "특정 커뮤니티의 정보를 조회")
+    @GetMapping("/{roomId}")
+    @ApiOperation(value = "방 정보 조회", notes = "특정 방의 정보를 조회")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "communityId", value = "커뮤니티 번호", required = true, dataType = "Long")
+            @ApiImplicitParam(name = "roomId", value = "방 아이디", required = true, dataType = "Long")
     })
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
-                    message = "Successfully retrieved community",
-                    response = Community.class,
+                    message = "Successfully retrieved room",
+                    response = Room.class,
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- id: 1\n  name: 샤마임"
+                                    value = "- roomId: 1\n  name: 샤마임"
                             )
                     )
             ),
@@ -109,26 +105,29 @@ public class CommunityController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    public ResponseEntity<Community> getCommunityById(@PathVariable Long communityId) {
-        for (Community community : communityDatabase) {
-            if (community.getId() == communityId) {
-                return new ResponseEntity<>(community, HttpStatus.OK);
+    public ResponseEntity<Room> getRoomById(@PathVariable Long roomId) {
+        for (Room room : roomDatabase) {
+            if (room.getRoomId() == roomId) {
+                return new ResponseEntity<>(room, HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping()
-    @ApiOperation(value = "커뮤니티 등록", notes = "새로운 커뮤니티를 등록")
+    @ApiOperation(value = "방 등록", notes = "새로운 방을 등록")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "name", value = "방 제목", required = true, dataType = "String")
+    })
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
-                    message = "Successfully created community",
-                    response = Community.class,
+                    message = "Successfully created room",
+                    response = Room.class,
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- id: 1\n  name: 샤마임"
+                                    value = "- roomId: 1\n  name: 샤마임"
                             )
                     )
             ),
@@ -136,63 +135,35 @@ public class CommunityController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    public ResponseEntity<Community> createCommunity(@RequestParam String name) {
-        communityDatabase.add(new Community(++communityId, name));
-        for (Community community : communityDatabase) {
-            if (community.getId() == communityId) {
-                return new ResponseEntity<>(community, HttpStatus.OK);
+    public ResponseEntity<Room> createRoom(@RequestParam String name) {
+        roomDatabase.add(Room
+                .builder()
+                .roomId(++roomId)
+                .name(name)
+                .build());
+        for (Room room : roomDatabase) {
+            if (room.getRoomId() == roomId) {
+                return new ResponseEntity<>(room, HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/{communityId}")
-    @ApiOperation(value = "커뮤니티 수정", notes = "커뮤니티의 정보를 수정")
+    @PutMapping("/{roomId}")
+    @ApiOperation(value = "방 수정", notes = "방의 정보를 수정")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "communityId", value = "커뮤니티 번호", required = true, dataType = "Long"),
-            @ApiImplicitParam(name = "name", value = "커뮤니티 이름", required = true, dataType = "String")
+            @ApiImplicitParam(name = "roomId", value = "방 아이디", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "name", value = "방 제목", required = true, dataType = "String")
     })
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
-                    message = "Successfully updated community",
-                    response = Community.class,
-                    examples = @Example(
-                            @ExampleProperty(
-                                    mediaType = "application/json",
-                                    value = "Community updated successfully"
-                            )
-                    )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-    })
-    public ResponseEntity<String> updateCommunityById(@PathVariable Long communityId,
-                                                      @RequestParam String name) {
-        for (Community community : communityDatabase) {
-            if (community.getId() == communityId) {
-                community.setName(name);
-                return new ResponseEntity<>("Community updated successfully", HttpStatus.OK);
-            }
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @DeleteMapping("/{communityId})")
-    @ApiOperation(value = "커뮤니티 삭제", notes = "커뮤니티의 정보를 삭제")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "communityId", value = "커뮤니티 번호", required = true, dataType = "Long"),
-    })
-    @ApiResponses(value = {
-            @ApiResponse(
-                    code = 200,
-                    message = "Successfully deleted community",
+                    message = "Successfully updated room",
                     response = String.class,
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "Community deleted successfully"
+                                    value = "Room updated successfully"
                             )
                     )
             ),
@@ -200,11 +171,43 @@ public class CommunityController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    public ResponseEntity<String> deleteCommunityById(@PathVariable Long communityId) {
-        for (Community community : communityDatabase) {
-            if (community.getId() == communityId) {
-                communityDatabase.remove(community);
-                return new ResponseEntity<>("Community deleted successfully", HttpStatus.OK);
+    public ResponseEntity<String> updateRoomyById(@PathVariable Long roomId,
+                                                  @RequestParam String name) {
+        for (Room room : roomDatabase) {
+            if (room.getRoomId() == roomId) {
+                room.setName(name);
+                return new ResponseEntity<>("Room updated successfully", HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping("/{roomId})")
+    @ApiOperation(value = "방 삭제", notes = "방의 정보를 삭제")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roomId", value = "방 아이디", required = true, dataType = "Long"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully deleted room",
+                    response = String.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "Room deleted successfully"
+                            )
+                    )
+            ),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    public ResponseEntity<String> deleteRoomById(@PathVariable Long roomId) {
+        for (Room room : roomDatabase) {
+            if (room.getRoomId() == roomId) {
+                roomDatabase.remove(room);
+                return new ResponseEntity<>("Room deleted successfully", HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

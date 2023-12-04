@@ -15,10 +15,12 @@ public class Test {
   @GetMapping("/test")
   @ApiOperation(value="HTTP:GET", notes = "TEST")
   @ApiImplicitParams({
-      @ApiImplicitParam(name="userName", value = "회원의이름", required = true, dataType = "String"),
-      @ApiImplicitParam(name="userId", value = "회원의아이디", required = true, dataType = "String")
+          @ApiImplicitParam(name="userName", value = "회원의이름", required = true, dataType = "String")
   })
-  public String getTest(){
+  public String getTest(@RequestParam String userName){
+    if(userName.equals(userName))
+      return "HIHI";
+    else
       return "FAIL";
 
   }
