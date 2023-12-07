@@ -30,9 +30,9 @@ public class RoomController {
     //  ####### 도메인 추가시 삭제 요망#######
     // 임시 데이터 저장소
     @ApiModelProperty(
-            example = "- roomId: 1\n  name: 샤마임\n" +
-                    "- roomId: 2\n  name: 수요기도회\n" +
-                    "- roomId: 3\n  name: 수련회",
+            example = "- roomId: 1\n  title: 샤마임\n" +
+                    "- roomId: 2\n  title: 수요기도회\n" +
+                    "- roomId: 3\n  title: 수련회",
             dataType = "List"
     )
     private static final List<Room> roomDatabase = new ArrayList<>();
@@ -50,7 +50,7 @@ public class RoomController {
     @Builder
     private static class Room {
         private Long roomId;
-        private String name;
+        private String title;
     }
 
     // ####################################
@@ -65,9 +65,9 @@ public class RoomController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- roomId: 1\n  name: 샤마임\n" +
-                                            "- roomId: 2\n  name: 수요기도회\n" +
-                                            "- roomId: 3\n  name: 수련회"
+                                    value = "- roomId: 1\n  title: 샤마임\n" +
+                                            "- roomId: 2\n  title: 수요기도회\n" +
+                                            "- roomId: 3\n  title: 수련회"
                             )
                     )
             ),
@@ -97,7 +97,7 @@ public class RoomController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- roomId: 1\n  name: 샤마임"
+                                    value = "- roomId: 1\n  title: 샤마임"
                             )
                     )
             ),
@@ -117,7 +117,7 @@ public class RoomController {
     @PostMapping()
     @ApiOperation(value = "방 등록", notes = "새로운 방을 등록")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "name", value = "방 제목", required = true, dataType = "String")
+            @ApiImplicitParam(name = "title", value = "방 제목", required = true, dataType = "String")
     })
     @ApiResponses(value = {
             @ApiResponse(
@@ -127,7 +127,7 @@ public class RoomController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- roomId: 1\n  name: 샤마임"
+                                    value = "- roomId: 1\n  title: 샤마임"
                             )
                     )
             ),
@@ -135,11 +135,11 @@ public class RoomController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    public ResponseEntity<Room> createRoom(@RequestParam String name) {
+    public ResponseEntity<Room> createRoom(@RequestParam String title) {
         roomDatabase.add(Room
                 .builder()
                 .roomId(++roomId)
-                .name(name)
+                .title(title)
                 .build());
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
@@ -153,7 +153,7 @@ public class RoomController {
     @ApiOperation(value = "방 수정", notes = "방의 정보를 수정")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roomId", value = "방 아이디", required = true, dataType = "Long"),
-            @ApiImplicitParam(name = "name", value = "방 제목", required = true, dataType = "String")
+            @ApiImplicitParam(name = "title", value = "방 제목", required = true, dataType = "String")
     })
     @ApiResponses(value = {
             @ApiResponse(
@@ -172,10 +172,10 @@ public class RoomController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     public ResponseEntity<String> updateRoomyById(@PathVariable Long roomId,
-                                                  @RequestParam String name) {
+                                                  @RequestParam String title) {
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
-                room.setName(name);
+                room.setTitle(title);
                 return new ResponseEntity<>("Room updated successfully", HttpStatus.OK);
             }
         }
