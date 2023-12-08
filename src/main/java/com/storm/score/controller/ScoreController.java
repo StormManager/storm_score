@@ -37,8 +37,8 @@ public class ScoreController {
     @ApiModelProperty(
             example =
                     "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n" +
-                    "- scoreId: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
-                    "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n",
+                            "- scoreId: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
+                            "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n",
             dataType = "List"
     )
     private static final List<Score> scoreDatabase = new ArrayList<>();
@@ -75,8 +75,8 @@ public class ScoreController {
                                     mediaType = "application/json",
                                     value =
                                             "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n" +
-                                            "- scoreId: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
-                                            "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n"
+                                                    "- scoreId: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
+                                                    "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n"
                             )
                     )
             )
@@ -217,5 +217,39 @@ public class ScoreController {
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/singer/{singer}")
+    @ApiOperation(value = "가수별 악보 목록 조회", notes = "가수 이름에 해당하는 악보 목록을 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "singer", value = "가수", required = true, dataType = "String"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved scores",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value =
+                                            "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n" +
+                                                    "- scoreId: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
+                                                    "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Score>> getScoresBySinger(@PathVariable String singer) {
+        List<Score> scores = new ArrayList<>();
+        for (Score score : scoreDatabase) {
+            if (score.getSinger().contains(singer)) {
+                scores.add(score);
+            }
+        }
+        if (scores.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(scores, HttpStatus.OK);
     }
 }
