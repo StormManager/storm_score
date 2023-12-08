@@ -25,6 +25,11 @@ import java.util.List;
 @RestController()
 @RequestMapping("/api/v1/users")
 @Api("User Management System")
+@ApiResponses(value = {
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+})
 public class UserController {
 
     //  ####### 도메인 추가시 삭제 요망#######
@@ -72,10 +77,7 @@ public class UserController {
                                             "- userId: 3\n  name: 선열\n  email: sy123@example.com"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> userList = userDatabase;
@@ -102,10 +104,7 @@ public class UserController {
                                     value = "- userId: 1\n  name: 경태\n  email: kt123@example.com"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<User> getUserById(@PathVariable Long userId) {
         for (User user : userDatabase) {
@@ -133,10 +132,7 @@ public class UserController {
                                     value = "- userId: 1\n  name: 경태\n  email: kt123@example.com"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<User> createUser(@RequestParam String name, @RequestParam String email) {
         userDatabase.add(User
@@ -171,10 +167,7 @@ public class UserController {
                                     value = "User updated successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<String> updateUserById(@PathVariable Long userId,
                                                  @RequestParam String name,
@@ -205,10 +198,7 @@ public class UserController {
                                     value = "User deleted successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<String> deleteUserById(@PathVariable Long userId) {
         for (User user : userDatabase) {

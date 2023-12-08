@@ -25,6 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/scores")
 @Api("Score Management System")
+@ApiResponses(value = {
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+})
 public class ScoreController {
 
     //  ####### 도메인 추가시 삭제 요망#######
@@ -74,10 +79,7 @@ public class ScoreController {
                                             "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<List<Score>> getAllScores() {
         List<Score> scoreList = scoreDatabase;
@@ -104,10 +106,7 @@ public class ScoreController {
                                     value = "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<Score> getScoreById(@PathVariable Long scoreId) {
         for (Score score : scoreDatabase) {
@@ -136,10 +135,7 @@ public class ScoreController {
                                     value = "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<Score> createScore(@RequestParam String title,
                                              @RequestParam String singer,
@@ -178,10 +174,7 @@ public class ScoreController {
                                     value = "Score updated successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<String> updateScoreById(@PathVariable Long scoreId,
                                                   @RequestParam String title,
@@ -214,10 +207,7 @@ public class ScoreController {
                                     value = "Score deleted successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<String> deleteScoreById(@PathVariable Long scoreId) {
         for (Score score : scoreDatabase) {
