@@ -104,7 +104,7 @@ public class RoomController {
                     )
             )
     })
-    public ResponseEntity<Room> getRoomById(@PathVariable Long roomId) {
+    public ResponseEntity<Room> getRoomByRoomId(@PathVariable Long roomId) {
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
                 return new ResponseEntity<>(room, HttpStatus.OK);
@@ -164,7 +164,7 @@ public class RoomController {
                     )
             )
     })
-    public ResponseEntity<String> updateRoomyById(@PathVariable Long roomId,
+    public ResponseEntity<String> updateRoomyByRoomId(@PathVariable Long roomId,
                                                   @RequestParam String title) {
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
@@ -193,7 +193,7 @@ public class RoomController {
                     )
             )
     })
-    public ResponseEntity<String> deleteRoomById(@PathVariable Long roomId) {
+    public ResponseEntity<String> deleteRoomByRoomId(@PathVariable Long roomId) {
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
                 roomDatabase.remove(room);

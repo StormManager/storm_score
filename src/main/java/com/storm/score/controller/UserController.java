@@ -106,7 +106,7 @@ public class UserController {
                     )
             )
     })
-    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
+    public ResponseEntity<User> getUserByUserId(@PathVariable Long userId) {
         for (User user : userDatabase) {
             if (user.getUserId() == userId) {
                 return new ResponseEntity<>(user, HttpStatus.OK);
@@ -169,7 +169,7 @@ public class UserController {
                     )
             )
     })
-    public ResponseEntity<String> updateUserById(@PathVariable Long userId,
+    public ResponseEntity<String> updateUserByUserId(@PathVariable Long userId,
                                                  @RequestParam String name,
                                                  @RequestParam String email) {
         for (User user : userDatabase) {
@@ -200,7 +200,7 @@ public class UserController {
                     )
             )
     })
-    public ResponseEntity<String> deleteUserById(@PathVariable Long userId) {
+    public ResponseEntity<String> deleteUserByUserId(@PathVariable Long userId) {
         for (User user : userDatabase) {
             if (user.getUserId() == userId) {
                 userDatabase.remove(user);

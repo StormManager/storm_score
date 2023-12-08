@@ -108,7 +108,7 @@ public class MessageController {
                     )
             )
     })
-    public ResponseEntity<Message> getMessageById(@PathVariable Long messageId) {
+    public ResponseEntity<Message> getMessageByMessageId(@PathVariable Long messageId) {
         for (Message message : messageDatabase) {
             if (message.getMessageId() == messageId) {
                 return new ResponseEntity<>(message, HttpStatus.OK);
@@ -173,7 +173,7 @@ public class MessageController {
                     )
             )
     })
-    public ResponseEntity<String> deleteMessageById(@PathVariable Long messageId) {
+    public ResponseEntity<String> deleteMessageByMessageId(@PathVariable Long messageId) {
         for (Message message : messageDatabase) {
             if (message.getMessageId() == messageId) {
                 messageDatabase.remove(message);

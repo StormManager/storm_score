@@ -108,7 +108,7 @@ public class ScoreController {
                     )
             )
     })
-    public ResponseEntity<Score> getScoreById(@PathVariable Long scoreId) {
+    public ResponseEntity<Score> getScoreByScoreId(@PathVariable Long scoreId) {
         for (Score score : scoreDatabase) {
             if (score.getScoreId() == scoreId) {
                 return new ResponseEntity<>(score, HttpStatus.OK);
@@ -176,7 +176,7 @@ public class ScoreController {
                     )
             )
     })
-    public ResponseEntity<String> updateScoreById(@PathVariable Long scoreId,
+    public ResponseEntity<String> updateScoreByScoreId(@PathVariable Long scoreId,
                                                   @RequestParam String title,
                                                   @RequestParam String singer,
                                                   @RequestParam String instrument) {
@@ -209,7 +209,7 @@ public class ScoreController {
                     )
             )
     })
-    public ResponseEntity<String> deleteScoreById(@PathVariable Long scoreId) {
+    public ResponseEntity<String> deleteScoreByScoreId(@PathVariable Long scoreId) {
         for (Score score : scoreDatabase) {
             if (score.getScoreId() == scoreId) {
                 scoreDatabase.remove(score);
@@ -272,7 +272,7 @@ public class ScoreController {
                     )
             )
     })
-    public ResponseEntity<List<Score>> getScoreByTitle(@PathVariable String title) {
+    public ResponseEntity<List<Score>> getScoresByTitle(@PathVariable String title) {
         List<Score> scores = new ArrayList<>();
         for (Score score : scores) {
             if (score.getTitle().contains(title)) {
