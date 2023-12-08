@@ -25,6 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/rooms")
 @Api("Room Management System")
+@ApiResponses(value = {
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+})
 public class RoomController {
 
     //  ####### 도메인 추가시 삭제 요망#######
@@ -70,10 +75,7 @@ public class RoomController {
                                             "- roomId: 3\n  title: 수련회"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<List<Room>> getAllRooms() {
         List<Room> roomList = roomDatabase;
@@ -100,10 +102,7 @@ public class RoomController {
                                     value = "- roomId: 1\n  title: 샤마임"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<Room> getRoomById(@PathVariable Long roomId) {
         for (Room room : roomDatabase) {
@@ -130,10 +129,7 @@ public class RoomController {
                                     value = "- roomId: 1\n  title: 샤마임"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<Room> createRoom(@RequestParam String title) {
         roomDatabase.add(Room
@@ -166,10 +162,7 @@ public class RoomController {
                                     value = "Room updated successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<String> updateRoomyById(@PathVariable Long roomId,
                                                   @RequestParam String title) {
@@ -198,10 +191,7 @@ public class RoomController {
                                     value = "Room deleted successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<String> deleteRoomById(@PathVariable Long roomId) {
         for (Room room : roomDatabase) {

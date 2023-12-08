@@ -25,6 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/invites")
 @Api("Invite Management System")
+@ApiResponses(value = {
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+})
 public class InviteController {
     //  ####### 도메인 추가시 삭제 요망#######
     // 임시 데이터 저장소
@@ -80,10 +85,7 @@ public class InviteController {
                                             "- inviteId: 3\n  senderUserId: 1\n  receiverUserId: 4\n,  roomId: 1\n  status: HOLD\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<List<Invite>> getAllInvites() {
         List<Invite> inviteList = inviteDatabase;
@@ -109,10 +111,7 @@ public class InviteController {
                                     value = "- inviteId: 1\n  senderUserId: 1\n  receiverUserId: 2\n,  roomId: 1\n  status: HOLD\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<Invite> getInviteByInviteId(@PathVariable Long inviteId) {
         for (Invite invite : inviteDatabase) {
@@ -141,10 +140,7 @@ public class InviteController {
                                     value = "- inviteId: 1\n  senderUserId: 1\n  receiverUserId: 2\n,  roomId: 1\n  status: HOLD\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<Invite> createInvite(@RequestParam Long senderUserId,
                                                @RequestParam Long receiverUserId,
@@ -183,10 +179,7 @@ public class InviteController {
                                     value = "Invite updated successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<String> updateInviteByInviteId(@PathVariable Long inviteId,
                                                          @RequestParam Invite.STATUS status) {
@@ -215,10 +208,7 @@ public class InviteController {
                                     value = "Invite deleted successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<String> deleteInviteByInviteId(@PathVariable Long inviteId) {
         for (Invite invite : inviteDatabase) {

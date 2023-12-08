@@ -25,6 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/scores")
 @Api("Score Management System")
+@ApiResponses(value = {
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+})
 public class ScoreController {
 
     //  ####### 도메인 추가시 삭제 요망#######
@@ -32,8 +37,8 @@ public class ScoreController {
     @ApiModelProperty(
             example =
                     "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n" +
-                    "- scoreId: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
-                    "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n",
+                            "- scoreId: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
+                            "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n",
             dataType = "List"
     )
     private static final List<Score> scoreDatabase = new ArrayList<>();
@@ -70,14 +75,11 @@ public class ScoreController {
                                     mediaType = "application/json",
                                     value =
                                             "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n" +
-                                            "- scoreId: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
-                                            "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n"
+                                                    "- scoreId: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
+                                                    "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<List<Score>> getAllScores() {
         List<Score> scoreList = scoreDatabase;
@@ -104,10 +106,7 @@ public class ScoreController {
                                     value = "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<Score> getScoreById(@PathVariable Long scoreId) {
         for (Score score : scoreDatabase) {
@@ -136,10 +135,7 @@ public class ScoreController {
                                     value = "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<Score> createScore(@RequestParam String title,
                                              @RequestParam String singer,
@@ -178,10 +174,7 @@ public class ScoreController {
                                     value = "Score updated successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<String> updateScoreById(@PathVariable Long scoreId,
                                                   @RequestParam String title,
@@ -214,10 +207,7 @@ public class ScoreController {
                                     value = "Score deleted successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<String> deleteScoreById(@PathVariable Long scoreId) {
         for (Score score : scoreDatabase) {
@@ -227,5 +217,71 @@ public class ScoreController {
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/singer/{singer}")
+    @ApiOperation(value = "가수별 악보 목록 조회", notes = "가수 이름에 해당하는 악보 목록을 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "singer", value = "가수", required = true, dataType = "String"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved scores",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value =
+                                            "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n" +
+                                                    "- scoreId: 2\n  title: 성령의 바람\n singer: 제이어스 J-US\n instrument: B♭\n" +
+                                                    "- scoreId: 3\n  title: 주의 사랑으로\n singer: 제이어스 J-US\n instrument: D\n"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Score>> getScoresBySinger(@PathVariable String singer) {
+        List<Score> scores = new ArrayList<>();
+        for (Score score : scoreDatabase) {
+            if (score.getSinger().contains(singer)) {
+                scores.add(score);
+            }
+        }
+        if (scores.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(scores, HttpStatus.OK);
+    }
+
+    @GetMapping("/title/{title}")
+    @ApiOperation(value = "제목별 악보 목록 조회", notes = "곡 제목에 해당하는 악보 목록을 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "title", value = "제목", required = true, dataType = "String"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved scores",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value =
+                                            "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Score>> getScoreByTitle(@PathVariable String title) {
+        List<Score> scores = new ArrayList<>();
+        for (Score score : scores) {
+            if (score.getTitle().contains(title)) {
+                scores.add(score);
+            }
+        }
+        if (scores.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(scores, HttpStatus.OK);
     }
 }
