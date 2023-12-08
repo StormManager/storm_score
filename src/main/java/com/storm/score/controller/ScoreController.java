@@ -252,4 +252,36 @@ public class ScoreController {
         }
         return new ResponseEntity<>(scores, HttpStatus.OK);
     }
+
+    @GetMapping("/title/{title}")
+    @ApiOperation(value = "제목별 악보 목록 조회", notes = "곡 제목에 해당하는 악보 목록을 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "title", value = "제목", required = true, dataType = "String"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved scores",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value =
+                                            "- scoreId: 1\n  title: 정직한 예배\n singer: 제이어스 J-US\n instrument: G\n"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Score>> getScoreByTitle(@PathVariable String title) {
+        List<Score> scores = new ArrayList<>();
+        for (Score score : scores) {
+            if (score.getTitle().contains(title)) {
+                scores.add(score);
+            }
+        }
+        if (scores.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(scores, HttpStatus.OK);
+    }
 }
