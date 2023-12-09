@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * description    : Room Management System
@@ -37,7 +38,7 @@ public class RoomController {
     @ApiModelProperty(
             example = "- roomId: 1\n  title: 샤마임\n" +
                     "- roomId: 2\n  title: 수요기도회\n" +
-                    "- roomId: 3\n  title: 수련회",
+                    "- roomId: 3\n  title: 수련회\n",
             dataType = "List"
     )
     private static final List<Room> roomDatabase = new ArrayList<>();
@@ -45,9 +46,9 @@ public class RoomController {
     private static long roomId = 0;
 
     static {
-        roomDatabase.add(new Room(++roomId, "샤마임"));
-        roomDatabase.add(new Room(++roomId, "수요기도회"));
-        roomDatabase.add(new Room(++roomId, "수련회"));
+        roomDatabase.add(new Room(++roomId, "샤마임", "123"));
+        roomDatabase.add(new Room(++roomId, "수요기도회", "123"));
+        roomDatabase.add(new Room(++roomId, "수련회", "123"));
     }
 
     @Getter
@@ -56,7 +57,17 @@ public class RoomController {
     private static class Room {
         private Long roomId;
         private String title;
+        private String password;
     }
+
+    @Getter
+    @Setter
+    @Builder
+    private static class RoomValidationResponseDTO {
+        private String message;
+        private boolean success;
+    }
+
 
     // ####################################
 
@@ -99,12 +110,12 @@ public class RoomController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- roomId: 1\n  title: 샤마임"
+                                    value = "- roomId: 1\n  title: 샤마임\n"
                             )
                     )
             )
     })
-    public ResponseEntity<Room> getRoomById(@PathVariable Long roomId) {
+    public ResponseEntity<Room> getRoomByRoomId(@PathVariable Long roomId) {
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
                 return new ResponseEntity<>(room, HttpStatus.OK);
@@ -164,8 +175,8 @@ public class RoomController {
                     )
             )
     })
-    public ResponseEntity<String> updateRoomyById(@PathVariable Long roomId,
-                                                  @RequestParam String title) {
+    public ResponseEntity<String> updateRoomyByRoomId(@PathVariable Long roomId,
+                                                      @RequestParam String title) {
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
                 room.setTitle(title);
@@ -193,11 +204,100 @@ public class RoomController {
                     )
             )
     })
-    public ResponseEntity<String> deleteRoomById(@PathVariable Long roomId) {
+    public ResponseEntity<String> deleteRoomByRoomId(@PathVariable Long roomId) {
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
                 roomDatabase.remove(room);
                 return new ResponseEntity<>("Room deleted successfully", HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/sorted-by-latest")
+    @ApiOperation(value = "방 목록 최신 정렬 조회", notes = "방 목록을 최신순으로 정렬 조회")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved room",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- roomId: 1\n  title: 샤마임\n" +
+                                            "- roomId: 2\n  title: 수요기도회\n" +
+                                            "- roomId: 3\n  title: 수련회"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Room>> getLatestRooms() {
+        if (roomDatabase.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(roomDatabase, HttpStatus.OK);
+    }
+
+    @GetMapping("/sorted-by-name")
+    @ApiOperation(value = "방 목록 이름 정렬 조회", notes = "방 목록을 이름순으로 정렬 조회")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved room",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- roomId: 1\n  title: 샤마임\n" +
+                                            "- roomId: 2\n  title: 수요기도회\n" +
+                                            "- roomId: 3\n  title: 수련회"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Room>> getRoomsSortedByName() {
+        if (roomDatabase.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(roomDatabase, HttpStatus.OK);
+    }
+
+    @PostMapping("/validate-password")
+    @ApiOperation(value = "방 비밀번호 검증 로직", notes = "방의 비밀번호가 유효한지 검증")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roomId", value = "방 아이디", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "password", value = "방 비밀번호", required = true, dataType = "String")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully validate room's password",
+                    response = Map.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- message: 비밀번호 검증이 성공했습니다.\n  success: true"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<RoomValidationResponseDTO> validateRoomPassword(@RequestParam Long roomId,
+                                                    @RequestParam String password) {
+
+        for (Room room : roomDatabase) {
+            if (room.getRoomId() == roomId) {
+                if (room.getPassword() == password) {
+                    return new ResponseEntity<>(
+                            RoomValidationResponseDTO.builder()
+                                    .message("비밀번호 검증이 성공했습니다.")
+                                    .success(true)
+                                    .build(), HttpStatus.OK);
+                }
+                return new ResponseEntity<>(
+                        RoomValidationResponseDTO.builder()
+                                .message("비밀번호가 올바르지 않습니다. 다시 시도해주세요.")
+                                .success(false)
+                                .build(), HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
