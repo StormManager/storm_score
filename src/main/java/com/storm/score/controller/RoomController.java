@@ -165,7 +165,7 @@ public class RoomController {
             )
     })
     public ResponseEntity<String> updateRoomyByRoomId(@PathVariable Long roomId,
-                                                  @RequestParam String title) {
+                                                      @RequestParam String title) {
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
                 room.setTitle(title);
@@ -201,5 +201,29 @@ public class RoomController {
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/sorted-by-latest")
+    @ApiOperation(value = "방 목록 최신 정렬 조회", notes = "방 목록을 최신순으로 정렬 조회")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved room",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- roomId: 1\n  title: 샤마임\n" +
+                                            "- roomId: 2\n  title: 수요기도회\n" +
+                                            "- roomId: 3\n  title: 수련회"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Room>> getLatestRooms() {
+        if (roomDatabase.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(roomDatabase, HttpStatus.OK);
     }
 }
