@@ -25,6 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/alarms")
 @Api("Alarm Management System")
+@ApiResponses(value = {
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+})
 public class AlarmController {
 
     //  ####### 도메인 추가시 삭제 요망#######
@@ -78,10 +83,7 @@ public class AlarmController {
                                             "- alarmId: 3\n  inviteId: 3\n  userId: 1\n  status: UNREAD"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<List<Alarm>> getAllAlarms() {
         List<Alarm> alarmList = alarmDatabase;
@@ -107,10 +109,7 @@ public class AlarmController {
                                     value = "- alarmId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<Alarm> getAlarmByAlarmId(@PathVariable Long alarmId) {
         for (Alarm alarm : alarmDatabase) {
@@ -138,10 +137,7 @@ public class AlarmController {
                                     value = "- alarmId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<Alarm> createAlarm(@RequestParam Long inviteId,
                                              @RequestParam Long userId) {
@@ -178,10 +174,7 @@ public class AlarmController {
                                     value = "Alarm updated successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<String> updateAlarmByAlarmId(@PathVariable Long alarmId) {
         for (Alarm alarm : alarmDatabase) {
@@ -209,10 +202,7 @@ public class AlarmController {
                                     value = "Alarm deleted successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<String> deleteAlarmByAlarmId(@PathVariable Long alarmId) {
         for (Alarm alarm : alarmDatabase) {

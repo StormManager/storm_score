@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * description    : Room Management System
@@ -25,14 +26,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/rooms")
 @Api("Room Management System")
+@ApiResponses(value = {
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+})
 public class RoomController {
 
     //  ####### 도메인 추가시 삭제 요망#######
     // 임시 데이터 저장소
     @ApiModelProperty(
-            example = "- roomId: 1\n  name: 샤마임\n" +
-                    "- roomId: 2\n  name: 수요기도회\n" +
-                    "- roomId: 3\n  name: 수련회",
+            example = "- roomId: 1\n  title: 샤마임\n" +
+                    "- roomId: 2\n  title: 수요기도회\n" +
+                    "- roomId: 3\n  title: 수련회\n",
             dataType = "List"
     )
     private static final List<Room> roomDatabase = new ArrayList<>();
@@ -40,9 +46,9 @@ public class RoomController {
     private static long roomId = 0;
 
     static {
-        roomDatabase.add(new Room(++roomId, "샤마임"));
-        roomDatabase.add(new Room(++roomId, "수요기도회"));
-        roomDatabase.add(new Room(++roomId, "수련회"));
+        roomDatabase.add(new Room(++roomId, "샤마임", "123"));
+        roomDatabase.add(new Room(++roomId, "수요기도회", "123"));
+        roomDatabase.add(new Room(++roomId, "수련회", "123"));
     }
 
     @Getter
@@ -50,8 +56,18 @@ public class RoomController {
     @Builder
     private static class Room {
         private Long roomId;
-        private String name;
+        private String title;
+        private String password;
     }
+
+    @Getter
+    @Setter
+    @Builder
+    private static class RoomValidationResponseDTO {
+        private String message;
+        private boolean success;
+    }
+
 
     // ####################################
 
@@ -65,15 +81,12 @@ public class RoomController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- roomId: 1\n  name: 샤마임\n" +
-                                            "- roomId: 2\n  name: 수요기도회\n" +
-                                            "- roomId: 3\n  name: 수련회"
+                                    value = "- roomId: 1\n  title: 샤마임\n" +
+                                            "- roomId: 2\n  title: 수요기도회\n" +
+                                            "- roomId: 3\n  title: 수련회"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<List<Room>> getAllRooms() {
         List<Room> roomList = roomDatabase;
@@ -97,15 +110,12 @@ public class RoomController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- roomId: 1\n  name: 샤마임"
+                                    value = "- roomId: 1\n  title: 샤마임\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
-    public ResponseEntity<Room> getRoomById(@PathVariable Long roomId) {
+    public ResponseEntity<Room> getRoomByRoomId(@PathVariable Long roomId) {
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
                 return new ResponseEntity<>(room, HttpStatus.OK);
@@ -117,7 +127,7 @@ public class RoomController {
     @PostMapping()
     @ApiOperation(value = "방 등록", notes = "새로운 방을 등록")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "name", value = "방 제목", required = true, dataType = "String")
+            @ApiImplicitParam(name = "title", value = "방 제목", required = true, dataType = "String")
     })
     @ApiResponses(value = {
             @ApiResponse(
@@ -127,19 +137,16 @@ public class RoomController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- roomId: 1\n  name: 샤마임"
+                                    value = "- roomId: 1\n  title: 샤마임"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
-    public ResponseEntity<Room> createRoom(@RequestParam String name) {
+    public ResponseEntity<Room> createRoom(@RequestParam String title) {
         roomDatabase.add(Room
                 .builder()
                 .roomId(++roomId)
-                .name(name)
+                .title(title)
                 .build());
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
@@ -153,7 +160,7 @@ public class RoomController {
     @ApiOperation(value = "방 수정", notes = "방의 정보를 수정")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roomId", value = "방 아이디", required = true, dataType = "Long"),
-            @ApiImplicitParam(name = "name", value = "방 제목", required = true, dataType = "String")
+            @ApiImplicitParam(name = "title", value = "방 제목", required = true, dataType = "String")
     })
     @ApiResponses(value = {
             @ApiResponse(
@@ -166,16 +173,13 @@ public class RoomController {
                                     value = "Room updated successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
-    public ResponseEntity<String> updateRoomyById(@PathVariable Long roomId,
-                                                  @RequestParam String name) {
+    public ResponseEntity<String> updateRoomyByRoomId(@PathVariable Long roomId,
+                                                      @RequestParam String title) {
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
-                room.setName(name);
+                room.setTitle(title);
                 return new ResponseEntity<>("Room updated successfully", HttpStatus.OK);
             }
         }
@@ -198,16 +202,102 @@ public class RoomController {
                                     value = "Room deleted successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
-    public ResponseEntity<String> deleteRoomById(@PathVariable Long roomId) {
+    public ResponseEntity<String> deleteRoomByRoomId(@PathVariable Long roomId) {
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
                 roomDatabase.remove(room);
                 return new ResponseEntity<>("Room deleted successfully", HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/sorted-by-latest")
+    @ApiOperation(value = "방 목록 최신 정렬 조회", notes = "방 목록을 최신순으로 정렬 조회")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved room",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- roomId: 1\n  title: 샤마임\n" +
+                                            "- roomId: 2\n  title: 수요기도회\n" +
+                                            "- roomId: 3\n  title: 수련회"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Room>> getLatestRooms() {
+        if (roomDatabase.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(roomDatabase, HttpStatus.OK);
+    }
+
+    @GetMapping("/sorted-by-name")
+    @ApiOperation(value = "방 목록 이름 정렬 조회", notes = "방 목록을 이름순으로 정렬 조회")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved room",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- roomId: 1\n  title: 샤마임\n" +
+                                            "- roomId: 2\n  title: 수요기도회\n" +
+                                            "- roomId: 3\n  title: 수련회"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Room>> getRoomsSortedByName() {
+        if (roomDatabase.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(roomDatabase, HttpStatus.OK);
+    }
+
+    @PostMapping("/validate-password")
+    @ApiOperation(value = "방 비밀번호 검증 로직", notes = "방의 비밀번호가 유효한지 검증")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roomId", value = "방 아이디", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "password", value = "방 비밀번호", required = true, dataType = "String")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully validate room's password",
+                    response = Map.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- message: 비밀번호 검증이 성공했습니다.\n  success: true"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<RoomValidationResponseDTO> validateRoomPassword(@RequestParam Long roomId,
+                                                    @RequestParam String password) {
+
+        for (Room room : roomDatabase) {
+            if (room.getRoomId() == roomId) {
+                if (room.getPassword() == password) {
+                    return new ResponseEntity<>(
+                            RoomValidationResponseDTO.builder()
+                                    .message("비밀번호 검증이 성공했습니다.")
+                                    .success(true)
+                                    .build(), HttpStatus.OK);
+                }
+                return new ResponseEntity<>(
+                        RoomValidationResponseDTO.builder()
+                                .message("비밀번호가 올바르지 않습니다. 다시 시도해주세요.")
+                                .success(false)
+                                .build(), HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

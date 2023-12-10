@@ -25,6 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/messages")
 @Api("Message Management System")
+@ApiResponses(value = {
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+})
 public class MessageController {
 
     //  ####### 도메인 추가시 삭제 요망#######
@@ -74,10 +79,7 @@ public class MessageController {
                                             "- messageId: 3\n  userId: 3\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<List<Message>> getAllMessages() {
         List<Message> messageList = messageDatabase;
@@ -104,12 +106,9 @@ public class MessageController {
                                     value = "- messageId: 1\n  userId: 1\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
-    public ResponseEntity<Message> getMessageById(@PathVariable Long messageId) {
+    public ResponseEntity<Message> getMessageByMessageId(@PathVariable Long messageId) {
         for (Message message : messageDatabase) {
             if (message.getMessageId() == messageId) {
                 return new ResponseEntity<>(message, HttpStatus.OK);
@@ -136,10 +135,7 @@ public class MessageController {
                                     value = "- messageId: 1\n  userId: 1\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
     public ResponseEntity<Message> createMessage(@RequestParam Long userId,
                                                  @RequestParam Long roomId,
@@ -175,12 +171,9 @@ public class MessageController {
                                     value = "Message deleted successfully"
                             )
                     )
-            ),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            )
     })
-    public ResponseEntity<String> deleteMessageById(@PathVariable Long messageId) {
+    public ResponseEntity<String> deleteMessageByMessageId(@PathVariable Long messageId) {
         for (Message message : messageDatabase) {
             if (message.getMessageId() == messageId) {
                 messageDatabase.remove(message);
