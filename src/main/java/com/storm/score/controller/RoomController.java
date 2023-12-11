@@ -312,7 +312,7 @@ public class RoomController {
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
-                    message = "Successfully retreived thie room's messages",
+                    message = "Successfully retrieved this room's messages",
                     response = List.class,
                     examples = @Example(
                             @ExampleProperty(
@@ -325,6 +325,31 @@ public class RoomController {
             )
     })
     public ResponseEntity<List<Message>> getRoomMessages(@PathVariable Long roomId) {
+        List<Message> messages = new ArrayList<>();
+        return new ResponseEntity<>(messages, HttpStatus.OK);
+    }
+
+    @GetMapping("/{roomId}/messages/8days")
+    @ApiOperation(value = "방 별 8일전 부터의 메시지 목록 조희", notes = "특정 방의 8일전 부터의 메시지 목록을 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roomId", value = "방 아이디", required = true, dataType = "Long"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved this room's since 8 days ago messages",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- messageId: 1\n  userId: 1\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n" +
+                                            "- messageId: 2\n  userId: 2\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n" +
+                                            "- messageId: 3\n  userId: 3\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Message>> getRoomMessagesSince8DaysAgo(@PathVariable Long roomId) {
         List<Message> messages = new ArrayList<>();
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
