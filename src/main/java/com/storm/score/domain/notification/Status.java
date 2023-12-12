@@ -1,11 +1,11 @@
-package com.storm.score.domain.alarm;
+package com.storm.score.domain.notification;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
  * description    :
- * packageName    : com.storm.score.domain.alarm
+ * packageName    : com.storm.score.domain.Notification
  * fileName       : STATUS
  * author         : senor14
  * date           : 2023-12-11
