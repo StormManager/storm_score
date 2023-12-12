@@ -305,4 +305,28 @@ public class UserController {
                                                      @RequestParam String nickname) {
         return new ResponseEntity<>("User's nickname updated successfully", HttpStatus.OK);
     }
+
+    @PutMapping("/{userId}/profile-image")
+    @ApiOperation(value = "사용자의 프로필 사진 수정", notes = "사용자의 프로필 사진을 수정")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "profileImage", value = "프로필 사진", required = true, dataType = "String")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully updated user's profile image",
+                    response = String.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "User's profile image updated successfully"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<String> updateUserProfileImage(@PathVariable Long userId,
+                                                     @RequestParam String profileImage) {
+        return new ResponseEntity<>("User's profileImage updated successfully", HttpStatus.OK);
+    }
 }
