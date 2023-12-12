@@ -22,7 +22,7 @@ import com.storm.score.com.exception.api.UnauthorizedException;
  * -----------------------------------------------------------
  * 2023/12/10        wammelier       최초 생성
  */
-public class ExceptionFactory {
+public interface ExceptionFactory {
 
   static  ApiException getException(final ErrorCode errorCode) {
     switch (errorCode) {

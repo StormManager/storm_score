@@ -22,7 +22,7 @@ import lombok.Getter;
 
 @Getter
 @JsonIgnoreProperties({"stackTrace", "suppressed", "localizedMessage"})
-public class ApiException {
+public class ApiException extends RuntimeException {
   private static final long serialVersionUID = 1L;
 
   private String rspCode;
