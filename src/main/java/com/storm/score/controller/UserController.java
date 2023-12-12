@@ -1,5 +1,8 @@
 package com.storm.score.controller;
 
+import com.storm.score.domain.notification.Notification;
+import com.storm.score.domain.room.Room;
+import com.storm.score.domain.user.User;
 import io.swagger.annotations.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,9 +38,9 @@ public class UserController {
     //  ####### 도메인 추가시 삭제 요망#######
     // 임시 데이터 저장소
     @ApiModelProperty(
-            example = "- userId: 1\n  name: 경태\n  email: kt123@example.com\n" +
-                    "- userId: 2\n  name: 승환\n  email: sh123@example.com\n" +
-                    "- userId: 3\n  name: 선열\n  email: sy123@example.com",
+            example = "- userId: 1\n  nickname: 경태\n  email: kt123@example.com\n" +
+                    "- userId: 2\n  nickname: 승환\n  email: sh123@example.com\n" +
+                    "- userId: 3\n  nickname: 선열\n  email: sy123@example.com",
             dataType = "List"
     )
     private static final List<User> userDatabase = new ArrayList<>();
@@ -55,7 +58,7 @@ public class UserController {
     @Builder
     private static class User {
         private Long userId;
-        private String name;
+        private String nickname;
         private String email;
     }
 
@@ -72,9 +75,9 @@ public class UserController {
                             @ExampleProperty(
                                     mediaType = "application/json",
                                     value =
-                                            "- userId: 1\n  name: 경태\n  email: kt123@example.com\n" +
-                                            "- userId: 2\n  name: 승환\n  email: sh123@example.com\n" +
-                                            "- userId: 3\n  name: 선열\n  email: sy123@example.com"
+                                            "- userId: 1\n  nickname: 경태\n  email: kt123@example.com\n" +
+                                                    "- userId: 2\n  nickname: 승환\n  email: sh123@example.com\n" +
+                                                    "- userId: 3\n  nickname: 선열\n  email: sy123@example.com"
                             )
                     )
             )
@@ -101,7 +104,7 @@ public class UserController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- userId: 1\n  name: 경태\n  email: kt123@example.com"
+                                    value = "- userId: 1\n  nickname: 경태\n  email: kt123@example.com"
                             )
                     )
             )
@@ -118,7 +121,7 @@ public class UserController {
     @PostMapping()
     @ApiOperation(value = "회원 등록", notes = "새로운 회원을 등록")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "name", value = "회원 이름", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true, dataType = "String"),
             @ApiImplicitParam(name = "email", value = "이메일 주소", required = true, dataType = "String")
     })
     @ApiResponses(value = {
@@ -129,16 +132,16 @@ public class UserController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- userId: 1\n  name: 경태\n  email: kt123@example.com"
+                                    value = "- userId: 1\n  nickname: 경태\n  email: kt123@example.com"
                             )
                     )
             )
     })
-    public ResponseEntity<User> createUser(@RequestParam String name, @RequestParam String email) {
+    public ResponseEntity<User> createUser(@RequestParam String nickname, @RequestParam String email) {
         userDatabase.add(User
                 .builder()
                 .userId(++userId)
-                .name(name)
+                .nickname(nickname)
                 .email(email)
                 .build());
         for (User user : userDatabase) {
@@ -153,7 +156,7 @@ public class UserController {
     @ApiOperation(value = "회원 수정", notes = "회원의 정보를 수정")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long"),
-            @ApiImplicitParam(name = "name", value = "회원 이름", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true, dataType = "String"),
             @ApiImplicitParam(name = "email", value = "이메일 주소", required = true, dataType = "String")
     })
     @ApiResponses(value = {
@@ -170,11 +173,11 @@ public class UserController {
             )
     })
     public ResponseEntity<String> updateUserByUserId(@PathVariable Long userId,
-                                                 @RequestParam String name,
-                                                 @RequestParam String email) {
+                                                     @RequestParam String nickname,
+                                                     @RequestParam String email) {
         for (User user : userDatabase) {
             if (user.getUserId() == userId) {
-                user.setName(name);
+                user.setNickname(nickname);
                 user.setEmail(email);
                 return new ResponseEntity<>("User updated successfully", HttpStatus.OK);
             }
@@ -210,5 +213,145 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/{userId}/unread-notifications")
+    @ApiOperation(value = "사용자의 안 읽은 알림 목록 조회", notes = "사용자의 안 읽은 알림 목록을 시간 내림차순으로 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved user's unread notifications",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- notificationId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD\n" +
+                                            "- notificationId: 2\n  inviteId: 2\n  userId: 1\n  status: UNREAD\n" +
+                                            "- notificationId: 3\n  inviteId: 3\n  userId: 1\n  status: UNREAD"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Notification>> getUnreadNotificationsSortedByTime(@PathVariable Long userId) {
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+    }
 
+    @GetMapping("/{userId}/notifications")
+    @ApiOperation(value = "사용자의 전체 알림 목록 조회", notes = "사용자의 전체 알림 목록을 시간 내림차순으로 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved user's notifications",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- notificationId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD\n" +
+                                            "- notificationId: 2\n  inviteId: 2\n  userId: 1\n  status: UNREAD\n" +
+                                            "- notificationId: 3\n  inviteId: 3\n  userId: 1\n  status: READ"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Notification>> getNotificationsSortedByTime(@PathVariable Long userId) {
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    @ApiOperation(value = "사용자의 닉네임으로 사용자 목록 조회", notes = "사용자의 닉네임으로 사용자 목록 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true, dataType = "String")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved users",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- userId: 1\n  nickname: 경태\n  email: kt123@example.com\n"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<com.storm.score.domain.user.User>> searchUserByNickname(@RequestParam String nickname) {
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+    }
+
+    @PutMapping("/{userId}/nickname")
+    @ApiOperation(value = "사용자의 닉네임 수정", notes = "사용자의 닉네임을 수정")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true, dataType = "String")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully updated user's nickname",
+                    response = String.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "User's nickname updated successfully"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<String> updateUserNickname(@PathVariable Long userId,
+                                                     @RequestParam String nickname) {
+        return new ResponseEntity<>("User's nickname updated successfully", HttpStatus.OK);
+    }
+
+    @PutMapping("/{userId}/profile-image")
+    @ApiOperation(value = "사용자의 프로필 사진 수정", notes = "사용자의 프로필 사진을 수정")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "profileImage", value = "프로필 사진", required = true, dataType = "String")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully updated user's profile image",
+                    response = String.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "User's profile image updated successfully"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<String> updateUserProfileImage(@PathVariable Long userId,
+                                                     @RequestParam String profileImage) {
+        return new ResponseEntity<>("User's profileImage updated successfully", HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/joined-rooms")
+    @ApiOperation(value = "사용자의 방 목록 조회", notes = "사용자가 속한 방 목록을 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved joined user's room",
+                    response = String.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- roomId: 1\n  title: 샤마임\n" +
+                                            "- roomId: 2\n  title: 수요기도회\n" +
+                                            "- roomId: 3\n  title: 수련회"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Room>> getJoinedRooms(@PathVariable Long userId) {
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+    }
 }
