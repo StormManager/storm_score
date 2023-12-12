@@ -281,4 +281,28 @@ public class UserController {
     public ResponseEntity<List<com.storm.score.domain.user.User>> searchUserByNickname(@RequestParam String nickname) {
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
+
+    @PutMapping("/{userId}/nickname")
+    @ApiOperation(value = "사용자의 닉네임 수정", notes = "사용자의 닉네임을 수정")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true, dataType = "String")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully updated user's nickname",
+                    response = String.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "User's nickname updated successfully"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<String> updateUserNickname(@PathVariable Long userId,
+                                                     @RequestParam String nickname) {
+        return new ResponseEntity<>("User's nickname updated successfully", HttpStatus.OK);
+    }
 }
