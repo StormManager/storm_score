@@ -1,4 +1,4 @@
-package com.storm.score.exception;
+package com.storm.score.com.exception;
 /**
  *
  */
