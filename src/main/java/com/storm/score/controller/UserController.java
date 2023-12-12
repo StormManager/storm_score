@@ -212,7 +212,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/unread-notifications")
-    @ApiOperation(value = "안 읽은 알림 목록 조회", notes = "안 읽은 알림 목록을 시간 내림차순으로 조회")
+    @ApiOperation(value = "사용자의 안 읽은 알림 목록 조회", notes = "사용자의 안 읽은 알림 목록을 시간 내림차순으로 조회")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long")
     })
@@ -232,6 +232,30 @@ public class UserController {
             )
     })
     public ResponseEntity<List<Notification>> getUnreadNotificationsSortedByTime(@PathVariable Long userId) {
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/notifications")
+    @ApiOperation(value = "사용자의 전체 알림 목록 조회", notes = "사용자의 전체 알림 목록을 시간 내림차순으로 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved user's notifications",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- notificationId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD\n" +
+                                            "- notificationId: 2\n  inviteId: 2\n  userId: 1\n  status: UNREAD\n" +
+                                            "- notificationId: 3\n  inviteId: 3\n  userId: 1\n  status: READ"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Notification>> getNotificationsSortedByTime(@PathVariable Long userId) {
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 }
