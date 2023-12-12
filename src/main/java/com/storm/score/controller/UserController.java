@@ -1,6 +1,7 @@
 package com.storm.score.controller;
 
 import com.storm.score.domain.notification.Notification;
+import com.storm.score.domain.room.Room;
 import com.storm.score.domain.user.User;
 import io.swagger.annotations.*;
 import lombok.Builder;
@@ -328,5 +329,29 @@ public class UserController {
     public ResponseEntity<String> updateUserProfileImage(@PathVariable Long userId,
                                                      @RequestParam String profileImage) {
         return new ResponseEntity<>("User's profileImage updated successfully", HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/joined-rooms")
+    @ApiOperation(value = "사용자의 방 목록 조회", notes = "사용자가 속한 방 목록을 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved joined user's room",
+                    response = String.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- roomId: 1\n  title: 샤마임\n" +
+                                            "- roomId: 2\n  title: 수요기도회\n" +
+                                            "- roomId: 3\n  title: 수련회"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Room>> getJoinedRooms(@PathVariable Long userId) {
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 }
