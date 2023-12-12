@@ -1,5 +1,6 @@
 package com.storm.score.controller;
 
+import com.storm.score.domain.message.Message;
 import io.swagger.annotations.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * description    : Room Management System
@@ -272,7 +272,7 @@ public class RoomController {
             @ApiResponse(
                     code = 200,
                     message = "Successfully validate room's password",
-                    response = Map.class,
+                    response = RoomValidationResponseDTO.class,
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
@@ -282,7 +282,7 @@ public class RoomController {
             )
     })
     public ResponseEntity<RoomValidationResponseDTO> validateRoomPassword(@RequestParam Long roomId,
-                                                    @RequestParam String password) {
+                                                                          @RequestParam String password) {
 
         for (Room room : roomDatabase) {
             if (room.getRoomId() == roomId) {
@@ -302,4 +302,82 @@ public class RoomController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping("/{roomId}/messages")
+    @ApiOperation(value = "방 별 메시지 목록 조희", notes = "특정 방의 메시지 목록을 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roomId", value = "방 아이디", required = true, dataType = "Long"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved this room's messages",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- messageId: 1\n  userId: 1\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n" +
+                                            "- messageId: 2\n  userId: 2\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n" +
+                                            "- messageId: 3\n  userId: 3\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Message>> getRoomMessages(@PathVariable Long roomId) {
+        List<Message> messages = new ArrayList<>();
+        return new ResponseEntity<>(messages, HttpStatus.OK);
+    }
+
+    @GetMapping("/{roomId}/messages/8days")
+    @ApiOperation(value = "방 별 8일전 부터의 메시지 목록 조희", notes = "특정 방의 8일전 부터의 메시지 목록을 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roomId", value = "방 아이디", required = true, dataType = "Long"),
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully retrieved this room's since 8 days ago messages",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- messageId: 1\n  userId: 1\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n" +
+                                            "- messageId: 2\n  userId: 2\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n" +
+                                            "- messageId: 3\n  userId: 3\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<Message>> getRoomMessagesSince8DaysAgo(@PathVariable Long roomId) {
+        List<Message> messages = new ArrayList<>();
+        return new ResponseEntity<>(messages, HttpStatus.OK);
+    }
+
+    @PostMapping("/{roomId}/messages/{messageId}/resend")
+    @ApiOperation(value = "메시지 재전송", notes = "메시지를 재전송함")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roomId", value = "방 아이디", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "messageId", value = "메시지 아이디", required = true, dataType = "Long")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully resend this messages",
+                    response = Message.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- messageId: 1\n  userId: 1\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n" +
+                                            "- messageId: 2\n  userId: 2\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n" +
+                                            "- messageId: 3\n  userId: 3\n roomId: 1\n imageUrl: https://s3.[aws-region].amazonaws.com\n"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<Message> resendMessage(@PathVariable Long roomId,
+                                                 @PathVariable Long messageId) {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
 }
