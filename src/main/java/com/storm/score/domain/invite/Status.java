@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Status {
-    HOLD("STATUS_HOLD", "보류"),
+    PENDING("STATUS_PENDING", "보류"),
     ACCEPT("STATUS_ACCEPT", "수락"),
     REJECT("STATUS_REJECT", "거절");
 

@@ -35,9 +35,9 @@ public class InviteController {
     // 임시 데이터 저장소
     @ApiModelProperty(
             example =
-                    "- inviteId: 1\n  senderUserId: 1\n  receiverUserId: 2\n,  roomId: 1\n  status: HOLD\n" +
-                    "- inviteId: 2\n  senderUserId: 1\n  receiverUserId: 3\n,  roomId: 1\n  status: HOLD\n" +
-                    "- inviteId: 3\n  senderUserId: 1\n  receiverUserId: 4\n,  roomId: 1\n  status: HOLD\n",
+                    "- inviteId: 1\n  senderUserId: 1\n  receiverUserId: 2\n,  roomId: 1\n  status: PENDING\n" +
+                    "- inviteId: 2\n  senderUserId: 1\n  receiverUserId: 3\n,  roomId: 1\n  status: PENDING\n" +
+                    "- inviteId: 3\n  senderUserId: 1\n  receiverUserId: 4\n,  roomId: 1\n  status: PENDING\n",
             dataType = "List"
     )
     private static final List<Invite> inviteDatabase = new ArrayList<>();
@@ -45,9 +45,9 @@ public class InviteController {
     private static long inviteId = 0;
 
     static {
-        inviteDatabase.add(new Invite(++inviteId, 1L, 2L, 1L, Invite.STATUS.HOLD));
-        inviteDatabase.add(new Invite(++inviteId, 1L, 3L, 2L, Invite.STATUS.HOLD));
-        inviteDatabase.add(new Invite(++inviteId, 1L, 4L, 3L, Invite.STATUS.HOLD));
+        inviteDatabase.add(new Invite(++inviteId, 1L, 2L, 1L, Invite.STATUS.PENDING));
+        inviteDatabase.add(new Invite(++inviteId, 1L, 3L, 2L, Invite.STATUS.PENDING));
+        inviteDatabase.add(new Invite(++inviteId, 1L, 4L, 3L, Invite.STATUS.PENDING));
     }
 
     @Getter
@@ -61,7 +61,7 @@ public class InviteController {
         private STATUS status;
 
         enum STATUS {
-            HOLD,
+            PENDING,
             ACCEPT,
             REJECT
         }
@@ -80,9 +80,9 @@ public class InviteController {
                             @ExampleProperty(
                                     mediaType = "application/json",
                                     value =
-                                            "- inviteId: 1\n  senderUserId: 1\n  receiverUserId: 2\n,  roomId: 1\n  status: HOLD\n" +
-                                            "- inviteId: 2\n  senderUserId: 1\n  receiverUserId: 3\n,  roomId: 1\n  status: HOLD\n" +
-                                            "- inviteId: 3\n  senderUserId: 1\n  receiverUserId: 4\n,  roomId: 1\n  status: HOLD\n"
+                                            "- inviteId: 1\n  senderUserId: 1\n  receiverUserId: 2\n,  roomId: 1\n  status: PENDING\n" +
+                                            "- inviteId: 2\n  senderUserId: 1\n  receiverUserId: 3\n,  roomId: 1\n  status: PENDING\n" +
+                                            "- inviteId: 3\n  senderUserId: 1\n  receiverUserId: 4\n,  roomId: 1\n  status: PENDING\n"
                             )
                     )
             )
@@ -108,7 +108,7 @@ public class InviteController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- inviteId: 1\n  senderUserId: 1\n  receiverUserId: 2\n,  roomId: 1\n  status: HOLD\n"
+                                    value = "- inviteId: 1\n  senderUserId: 1\n  receiverUserId: 2\n,  roomId: 1\n  status: PENDING\n"
                             )
                     )
             )
@@ -137,7 +137,7 @@ public class InviteController {
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- inviteId: 1\n  senderUserId: 1\n  receiverUserId: 2\n,  roomId: 1\n  status: HOLD\n"
+                                    value = "- inviteId: 1\n  senderUserId: 1\n  receiverUserId: 2\n,  roomId: 1\n  status: PENDING\n"
                             )
                     )
             )
@@ -163,10 +163,10 @@ public class InviteController {
     @PutMapping("/{inviteId}")
     @ApiOperation(value = "초대 읽음 상태 수정",
             notes = "초대의 읽음 상태 정보를 수정\n" +
-                    "[ HOLD(보류) => ACCEPT(수락) or HOLD(보류) => REJECT(거절) ]")
+                    "[ PENDING(보류) => ACCEPT(수락) or PENDING(보류) => REJECT(거절) ]")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "inviteId", value = "초대 아이디", required = true, dataType = "Long"),
-            @ApiImplicitParam(name = "status", value = "상태(HOLD, ACCEPT, REJECT)", required = true, dataType = "Enum")
+            @ApiImplicitParam(name = "status", value = "상태(PENDING, ACCEPT, REJECT)", required = true, dataType = "Enum")
     })
     @ApiResponses(value = {
             @ApiResponse(
