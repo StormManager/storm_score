@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * description    :
  * packageName    : com.storm.score.controller
- * fileName       : AlarmController
+ * fileName       : NotificationController
  * author         : senor14
  * date           : 2023-11-28
  * ===========================================================
@@ -23,39 +23,39 @@ import java.util.List;
  * 2023-11-28        senor14       최초 생성
  */
 @RestController
-@RequestMapping("/api/v1/alarms")
-@Api("Alarm Management System")
+@RequestMapping("/api/v1/notifications")
+@Api("Notification Management System")
 @ApiResponses(value = {
         @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
         @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
         @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
 })
-public class AlarmController {
+public class NotificationController {
 
     //  ####### 도메인 추가시 삭제 요망#######
     // 임시 데이터 저장소
     @ApiModelProperty(
             example =
-                    "- alarmId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD\n" +
-                    "- alarmId: 2\n  inviteId: 2\n  userId: 1\n  status: UNREAD\n" +
-                    "- alarmId: 3\n  inviteId: 3\n  userId: 1\n  status: UNREAD",
+                    "- notificationId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD\n" +
+                    "- notificationId: 2\n  inviteId: 2\n  userId: 1\n  status: UNREAD\n" +
+                    "- notificationId: 3\n  inviteId: 3\n  userId: 1\n  status: UNREAD",
             dataType = "List"
     )
-    private static final List<Alarm> alarmDatabase = new ArrayList<>();
+    private static final List<Notification> notificationDatabase = new ArrayList<>();
 
-    private static long alarmId = 0;
+    private static long notificationId = 0;
 
     static {
-        alarmDatabase.add(new Alarm(++alarmId, 1L, 1L, Alarm.STATUS.UNREAD));
-        alarmDatabase.add(new Alarm(++alarmId, 2L, 1L, Alarm.STATUS.UNREAD));
-        alarmDatabase.add(new Alarm(++alarmId, 3L, 1L, Alarm.STATUS.UNREAD));
+        notificationDatabase.add(new Notification(++notificationId, 1L, 1L, Notification.STATUS.UNREAD));
+        notificationDatabase.add(new Notification(++notificationId, 2L, 1L, Notification.STATUS.UNREAD));
+        notificationDatabase.add(new Notification(++notificationId, 3L, 1L, Notification.STATUS.UNREAD));
     }
 
     @Getter
     @Setter
     @Builder
-    private static class Alarm {
-        private Long alarmId;
+    private static class Notification {
+        private Long notificationId;
         private Long inviteId;
         private Long userId;
         private STATUS status;
@@ -73,48 +73,48 @@ public class AlarmController {
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
-                    message = "Successfully retrieved all alarms",
+                    message = "Successfully retrieved all notifications",
                     response = List.class,
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- alarmId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD\n" +
-                                            "- alarmId: 2\n  inviteId: 2\n  userId: 1\n  status: UNREAD\n" +
-                                            "- alarmId: 3\n  inviteId: 3\n  userId: 1\n  status: UNREAD"
+                                    value = "- notificationId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD\n" +
+                                            "- notificationId: 2\n  inviteId: 2\n  userId: 1\n  status: UNREAD\n" +
+                                            "- notificationId: 3\n  inviteId: 3\n  userId: 1\n  status: UNREAD"
                             )
                     )
             )
     })
-    public ResponseEntity<List<Alarm>> getAllAlarms() {
-        List<Alarm> alarmList = alarmDatabase;
-        if (alarmList != null) {
-            return new ResponseEntity<>(alarmList, HttpStatus.OK);
+    public ResponseEntity<List<Notification>> getAllNotifications() {
+        List<Notification> notificationList = notificationDatabase;
+        if (notificationList != null) {
+            return new ResponseEntity<>(notificationList, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/{alarmId}")
+    @GetMapping("/{notificationId}")
     @ApiOperation(value = "알림 정보 조회", notes = "특정 알림의 정보를 조회")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "alarmId", value = "알림 아이디", required = true, dataType = "Long")
+            @ApiImplicitParam(name = "notificationId", value = "알림 아이디", required = true, dataType = "Long")
     })
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
-                    message = "Successfully retrieved alarm",
-                    response = Alarm.class,
+                    message = "Successfully retrieved Notification",
+                    response = Notification.class,
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- alarmId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD"
+                                    value = "- notificationId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD"
                             )
                     )
             )
     })
-    public ResponseEntity<Alarm> getAlarmByAlarmId(@PathVariable Long alarmId) {
-        for (Alarm alarm : alarmDatabase) {
-            if (alarm.getAlarmId() == alarmId) {
-                return new ResponseEntity<>(alarm, HttpStatus.OK);
+    public ResponseEntity<Notification> getNotificationByNotificationId(@PathVariable Long notificationId) {
+        for (Notification notification : notificationDatabase) {
+            if (notification.getNotificationId() == notificationId) {
+                return new ResponseEntity<>(notification, HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -129,86 +129,86 @@ public class AlarmController {
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
-                    message = "Successfully created alarm",
-                    response = Alarm.class,
+                    message = "Successfully created notification",
+                    response = Notification.class,
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "- alarmId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD"
+                                    value = "- notificationId: 1\n  inviteId: 1\n  userId: 1\n,  status: UNREAD"
                             )
                     )
             )
     })
-    public ResponseEntity<Alarm> createAlarm(@RequestParam Long inviteId,
+    public ResponseEntity<Notification> createNotification(@RequestParam Long inviteId,
                                              @RequestParam Long userId) {
-        alarmDatabase.add(Alarm
+        notificationDatabase.add(Notification
                 .builder()
-                .alarmId(++alarmId)
+                .notificationId(++notificationId)
                 .inviteId(inviteId)
                 .userId((userId))
-                .status(Alarm.STATUS.UNREAD)
+                .status(Notification.STATUS.UNREAD)
                 .build());
-        for (Alarm alarm : alarmDatabase) {
-            if (alarm.getAlarmId() == alarmId) {
-                return new ResponseEntity<>(alarm, HttpStatus.OK);
+        for (Notification notification : notificationDatabase) {
+            if (notification.getNotificationId() == notificationId) {
+                return new ResponseEntity<>(notification, HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/{alarmId}")
+    @PutMapping("/{notificationId}")
     @ApiOperation(value = "알림 읽음 상태 수정", 
             notes = "알림의 읽음 상태 정보를 수정\n" +
                     "[ UNREAD(안읽음) => READ(읽음) ]")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "alarmId", value = "알림 아이디", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "notificationId", value = "알림 아이디", required = true, dataType = "Long"),
     })
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
-                    message = "Successfully updated alarm",
+                    message = "Successfully updated notification",
                     response = String.class,
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "Alarm updated successfully"
+                                    value = "Notification updated successfully"
                             )
                     )
             )
     })
-    public ResponseEntity<String> updateAlarmByAlarmId(@PathVariable Long alarmId) {
-        for (Alarm alarm : alarmDatabase) {
-            if (alarm.getAlarmId() == alarmId) {
-                alarm.setStatus(Alarm.STATUS.READ);
-                return new ResponseEntity<>("Alarm updated successfully", HttpStatus.OK);
+    public ResponseEntity<String> updateNotificationByNotificationId(@PathVariable Long notificationId) {
+        for (Notification notification : notificationDatabase) {
+            if (notification.getNotificationId() == notificationId) {
+                notification.setStatus(Notification.STATUS.READ);
+                return new ResponseEntity<>("notification updated successfully", HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/{alarmId}")
+    @DeleteMapping("/{notificationId}")
     @ApiOperation(value = "알림 삭제", notes = "알림의 정보를 삭제")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "alarmId", value = "알림 아이디", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "notificationId", value = "알림 아이디", required = true, dataType = "Long"),
     })
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
-                    message = "Successfully deleted alarm",
+                    message = "Successfully deleted notification",
                     response = String.class,
                     examples = @Example(
                             @ExampleProperty(
                                     mediaType = "application/json",
-                                    value = "Alarm deleted successfully"
+                                    value = "Notification deleted successfully"
                             )
                     )
             )
     })
-    public ResponseEntity<String> deleteAlarmByAlarmId(@PathVariable Long alarmId) {
-        for (Alarm alarm : alarmDatabase) {
-            if (alarm.getAlarmId() == alarmId) {
-                alarmDatabase.remove(alarm);
-                return new ResponseEntity<>("Alarm deleted successfully", HttpStatus.OK);
+    public ResponseEntity<String> deleteNotificationByNotificationId(@PathVariable Long notificationId) {
+        for (Notification notification : notificationDatabase) {
+            if (notification.getNotificationId() == notificationId) {
+                notificationDatabase.remove(notification);
+                return new ResponseEntity<>("notification deleted successfully", HttpStatus.OK);
             }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
