@@ -1,6 +1,39 @@
 spring:
+  profiles.active: "local"
+  messages:
+    basename: messages/messages
+    encoding: UTF-8
+    jackson:
+      dfault-property-inclusion: non_null
+    application:
+      name: storm-sns
+    servlet:
+      multipart:
+        max-file-size: 30MB
+        max-request-size: 30MB
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
 server:
   port: 8443
+
+
+---
+spring:
+  config.activeate.on-profile: jdbc
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://3.34.208.34:3306/STORM_SCORE
+    name: root
+    password: tmxha1925
+    username: root
+    sql-script-encoding: "UTF-8"
+
+mybatis:
+  type-aliases-package: com.storm.score.domain
+  configuration:
+    map-underscore-to-camel-case: true
+    default-executor-type: reuse
+
+
+

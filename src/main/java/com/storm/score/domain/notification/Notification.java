@@ -1,6 +1,7 @@
 package com.storm.score.domain.notification;
 
 import com.storm.score.domain.BaseTime;
+import com.storm.score.domain.invite.Status;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
