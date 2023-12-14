@@ -31,7 +31,8 @@ public class Test {
           @ApiImplicitParam(name="userName", value = "회원의이름", required = true, dataType = "String")
   })
   public String insertUser(@RequestParam String userName) throws Exception{
-    userService.insertUser();
+
+      userService.insertUser();
 
     return "success";
   }
