@@ -85,4 +85,23 @@ public class AuthController {
     public ResponseEntity<?> appleSignIn(@RequestBody User user) {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
+    @PostMapping("/kakao")
+    @ApiOperation(value = "카카오 로그인", notes = "카카오 로그인")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully signed in",
+                    response = com.storm.score.domain.user.User.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- userId: 1\n  nickname: 경태\n  email: kt123@example.com\n"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<?> kakaoSignIn(@RequestBody User user) {
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 }
