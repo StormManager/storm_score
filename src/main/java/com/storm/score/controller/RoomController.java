@@ -1,6 +1,7 @@
 package com.storm.score.controller;
 
 import com.storm.score.domain.message.Message;
+import com.storm.score.domain.user.User;
 import io.swagger.annotations.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -379,5 +380,27 @@ public class RoomController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
+    @GetMapping("/{roomId}/users")
+    @ApiOperation(value = "해당 방에 속하는 회원 목록 조회", notes = "해당 방에 속하는 회원 목록 조회")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roomId", value = "방 아이디", required = true, dataType = "Long")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully room's users",
+                    response = List.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- userId: 1\n  nickname: 경태\n  email: kt123@example.com\n" +
+                                            "- userId: 2\n  nickname: 승환\n  email: sh123@example.com\n" +
+                                            "- userId: 3\n  nickname: 선열\n  email: sy123@example.com"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<List<User>> getUsersInRoom(@PathVariable Long roomId) {
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+    }
 }
