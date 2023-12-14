@@ -32,13 +32,10 @@ public class AuthController {
 
     @PostMapping("/login")
     @ApiOperation(value = "로그인", notes = "로그인")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long")
-    })
     @ApiResponses(value = {
             @ApiResponse(
                     code = 200,
-                    message = "Successfully signed up",
+                    message = "Successfully signed in",
                     response = com.storm.score.domain.user.User.class,
                     examples = @Example(
                             @ExampleProperty(
@@ -69,5 +66,23 @@ public class AuthController {
     public ResponseEntity<?> refreshAccessToken() {
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
+    @PostMapping("/apple")
+    @ApiOperation(value = "애플 로그인", notes = "애플 로그인")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully signed in",
+                    response = com.storm.score.domain.user.User.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- userId: 1\n  nickname: 경태\n  email: kt123@example.com\n"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<?> appleSignIn(@RequestBody User user) {
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 }
