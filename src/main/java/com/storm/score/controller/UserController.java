@@ -379,4 +379,26 @@ public class UserController {
     public ResponseEntity<List<Invite>> getPendingInvites(@PathVariable Long userId) {
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
+
+    @PostMapping("/signup")
+    @ApiOperation(value = "회원가입", notes = "회원가입")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long")
+    })
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 200,
+                    message = "Successfully signed up",
+                    response = com.storm.score.domain.user.User.class,
+                    examples = @Example(
+                            @ExampleProperty(
+                                    mediaType = "application/json",
+                                    value = "- userId: 1\n  nickname: 경태\n  email: kt123@example.com\n"
+                            )
+                    )
+            )
+    })
+    public ResponseEntity<com.storm.score.domain.user.User> signUp(@RequestBody com.storm.score.domain.user.User user) {
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 }
