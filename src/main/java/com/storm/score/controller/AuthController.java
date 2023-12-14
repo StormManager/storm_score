@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @PostMapping("/login")
+    @ApiOperation(value = "로그인", notes = "로그인")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "회원 아이디", required = true, dataType = "Long")
     })
@@ -52,6 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @ApiOperation(value = "로그아웃", notes = "로그아웃")
     @ApiResponses(value = {
             @ApiResponse(
                     code = 204,
@@ -61,4 +63,11 @@ public class AuthController {
     public ResponseEntity<Void> logout() {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping("/token/refresh")
+    @ApiOperation(value = "토큰 재발급", notes = "토큰 재발급")
+    public ResponseEntity<?> refreshAccessToken() {
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
 }
