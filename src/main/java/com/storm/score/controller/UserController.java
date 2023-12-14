@@ -422,4 +422,15 @@ public class UserController {
     public ResponseEntity<com.storm.score.domain.user.User> login(@RequestBody com.storm.score.domain.user.User user) {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
+    @PostMapping("/logout")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    code = 204,
+                    message = "No Content"
+            )
+    })
+    public ResponseEntity<Void> logout() {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
