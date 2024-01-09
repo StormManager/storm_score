@@ -71,13 +71,14 @@ dependencies {
 //    // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
 ////    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.1030'
 //
-    //JWT
-    implementation 'javax.xml.bind:jaxb-api'
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-    runtime 'io.jsonwebtoken:jjwt-impl:0.11.2'
-    runtime 'io.jsonwebtoken:jjwt-jackson:0.11.2'
-    implementation group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.0.10.RELEASE'
+    // Spring Security
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.springframework.security:spring-security-test"
 
+    // JWT
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
 
 //    // spring-cloud-aws
