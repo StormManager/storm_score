@@ -3,49 +3,59 @@ package com.storm.score.com.security;
  *
  */
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * description    :
  * packageName    : com.storm.score.com.security
  * fileName       : SecurityConfig
  * author         : wammelier
- * date           : 2024/01/08
+ * date           : 2024/01/09
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2024/01/08        wammelier       최초 생성
+ * 2024/01/09        wammelier       최초 생성
  */
+
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled=true)
+@RequiredArgsConstructor
 public class SecurityConfig {
+  private final JwtTokenProvider jwtTokenProvider;
 
-  private final TokenProvider tokenProvider;
-  private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-  private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    return httpSecurity
+        // REST API이므로 basic auth 및 csrf 보안을 사용하지 않음
+        .httpBasic().disable().csrf().disable()
+        // Jwt를 사용하기 때문에 세션을 사용하지 않음
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and().authorizeRequests()
+        // 해당 API에 대해서는 모든 요청을 허가
+        .requestMatchers().permitAll()
+        // USER 권한이 있어야 요청할 수 있음
+        .requestMatchers().hasRole("USER")
+        // 이 밖에 모든 요청에 대해서 인증을 필요로 한다는 설정
+        .anyRequest().authenticated()
+        .and()
+        // JWT 인증을 위하여 직접 구현한 필터를 UsernamePasswordAuthenticationFilter 전에 실행
+        .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+            UsernamePasswordAuthenticationFilter.class).build();
 
-  // TokenProvider, JwtAuthenticationEntryPoint, JwtAccessDeniedHandler 의존성 주입
-  public SecurityConfig(
-      TokenProvider tokenProvider,
-      JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-      JwtAccessDeniedHandler jwtAccessDeniedHandler
-  ) {
-    this.tokenProvider = tokenProvider;
-    this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-    this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
   }
 
-  // 비밀번호 암호화
   @Bean
   public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
+    //BCrypt Encoder 사용
+    return PasswordEncoderFactories.createDelegatingPasswordEncoder();
   }
-
-
 }
